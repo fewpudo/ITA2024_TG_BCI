@@ -15,7 +15,10 @@ from utils import selectors, tools
 
 
 data = scipy.io.loadmat('subjects/S1.mat')
-result = selectors.parametersSelector(data['data'], 10, 0, 30)
+featureMatrix = selectors.buildFeatureMatrix(data['data'], 10, 0)
+print(featureMatrix.shape)
+
+
 
 
 

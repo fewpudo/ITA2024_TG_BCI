@@ -1,6 +1,6 @@
 
 def frequencySelector(data ,freq: int):
-    res = (freq - 8)/2
+    res = (freq - 8)/0.2
     return data[:, :, int(res), :]
 
 def blockSelector(data, block: int):
@@ -10,8 +10,10 @@ def channelSelector(data, channel: int):
     return data[channel, :]
 
 
-def parametersSelector(data, freq: int, block: int, channel: int):
+def parametersSelector(data, freq: int, block: int):
     freq_data = frequencySelector(data, freq)
     block_data = blockSelector(freq_data, block)
-    channel_data = channelSelector(block_data, channel)
-    return channel_data
+    return block_data
+
+def buildFeatureMatrix(data, freq: int, block: int):
+    return parametersSelector(data, freq, block).T
