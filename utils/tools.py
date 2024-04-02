@@ -31,7 +31,7 @@ def filterData(data) :
     cutoff_notch_freq = 60 # Frequência de corte do filtro notch
     Q = 30 #Fator de qualidade do filtro Notch
     lowpass_data = butterLowpassFilter(data, cutoff_lowpass_freq, sample_freq)
-    notch_data = notchFilter(data, 60, sample_freq, Q)
+    notch_data = notchFilter(lowpass_data, cutoff_notch_freq, sample_freq, Q)
     res = CarFilter(notch_data)
     return res
 

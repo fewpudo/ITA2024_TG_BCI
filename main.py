@@ -15,8 +15,7 @@ from utils import selectors, tools
 
 
 data = scipy.io.loadmat('subjects/S1.mat')
-especific_data = selectors.frequencySelector(data['data'], 10)
-filtered_data = tools.CarFilter(especific_data)
+result = selectors.parametersSelector(data['data'], 10, 0, 30)
 
 
 
