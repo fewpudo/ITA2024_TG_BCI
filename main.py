@@ -1,5 +1,3 @@
-import csv
-import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 from utils import selectors, tools
@@ -16,7 +14,7 @@ from utils import selectors, tools
 
 data = scipy.io.loadmat('subjects/S1.mat')
 featureMatrix = selectors.buildFeatureMatrix(data['data'], 10, 0)
-print(featureMatrix.shape)
+
 
 
 
