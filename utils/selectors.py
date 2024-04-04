@@ -28,11 +28,10 @@ def buildWindowedData(data, freq: int):
     for i in range(channels):
         temp = parametersSelector(data, freq, 0, (i+60))
         for j in range(windows):
-            # Pegar o valor máximo das frequências de 8, 10, 12 e 15 Hz antes de colocar na matriz
             new_data = temp[j*250:(j+1)*250]
             max_data = [new_data[(8)], new_data[(10)], new_data[(12)], new_data[(15)]]
             full_data_matrix[j,i] = abs(tools.fftTransform(new_data))
-            matrix[j, i] = abs(tools.fftTransform(max_data)) #tem que pegar o abs() da fft
+            matrix[j, i] = abs(tools.fftTransform(max_data))
     return matrix, full_data_matrix
 
 
