@@ -22,7 +22,7 @@ def parametersSelector(data, freq: int, block: int, channel: int):
 
 def buildWindowedData(data, freq: int):
     channels = 3
-    windows = 4
+    windows = 5
     matrix = np.empty((5, 3), dtype=object)
     full_data_matrix = np.empty((5, 3), dtype=object)
     for i in range(channels):
