@@ -13,7 +13,11 @@ from utils import selectors, tools
 
 
 data = scipy.io.loadmat('subjects/S1.mat')
-featureMatrix = selectors.buildFeatureMatrix(data['data'], 10, 0)
+featureMatrix = selectors.buildFeatureMatrix(data['data'])
+print(featureMatrix.shape)
+# Assuming you have 250 samples and 40 frequencies
+
+
 
 
 

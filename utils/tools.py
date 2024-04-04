@@ -1,4 +1,5 @@
 import numpy as np
+import scipy
 from scipy.signal import butter, filtfilt, iirnotch
 
 sample_freq = 250
@@ -36,5 +37,5 @@ def filterData(data) :
     return res
 
 def fftTransform(data):
-    fft_res = np.fft.fft(data)
+    fft_res = scipy.fft.fft(data)
     return fft_res
