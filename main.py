@@ -13,8 +13,12 @@ from utils import selectors, tools
 
 
 data = scipy.io.loadmat('subjects/S1.mat')
-featureMatrix = selectors.buildFeatureMatrix(data['data'])
+featureMatrix, full_featureMatrix = selectors.buildFeatureMatrix(data['data'])
+print(full_featureMatrix.shape)
 print(featureMatrix.shape)
+plt.plot(full_featureMatrix[3, 0])  # Access the last column using -1 index
+plt.xlim(5, 30)
+plt.show()
 # Assuming you have 250 samples and 40 frequencies
 
 

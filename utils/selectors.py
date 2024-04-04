@@ -21,28 +21,32 @@ def parametersSelector(data, freq: int, block: int, channel: int):
     return tools.CarFilter(windowed_data)
 
 def buildWindowedData(data, freq: int):
-    channels = 2
+    channels = 3
+    windows = 4
     matrix = np.empty((5, 3), dtype=object)
+    full_data_matrix = np.empty((5, 3), dtype=object)
     for i in range(channels):
         temp = parametersSelector(data, freq, 0, (i+60))
-        for j in range(4):
+        for j in range(windows):
             # Pegar o valor máximo das frequências de 8, 10, 12 e 15 Hz antes de colocar na matriz
             new_data = temp[j*250:(j+1)*250]
             max_data = [new_data[(8)], new_data[(10)], new_data[(12)], new_data[(15)]]
+            full_data_matrix[j,i] = abs(tools.fftTransform(new_data))
             matrix[j, i] = abs(tools.fftTransform(max_data)) #tem que pegar o abs() da fft
-    return matrix
+    return matrix, full_data_matrix
 
 
 
 def buildFeatureMatrix(data):
-    first_freq = buildWindowedData(data, 8)
-    second_freq = buildWindowedData(data, 10)
-    third_freq = buildWindowedData(data, 12)
-    fourth_freq = buildWindowedData(data, 15)
+    first_freq, full_first_freq = buildWindowedData(data, 8)
+    second_freq, full_second_freq = buildWindowedData(data, 10)
+    third_freq, full_third_freq = buildWindowedData(data, 12)
+    fourth_freq, full_fourth_freq = buildWindowedData(data, 15)
 
     stacked_data = np.vstack((first_freq, second_freq, third_freq, fourth_freq))
+    full_stacked_data = np.vstack((full_first_freq, full_second_freq, full_third_freq, full_fourth_freq))
     
-    return stacked_data
+    return stacked_data, full_stacked_data
 
 
 # diminuir a quantidade de frequências inicialmente
