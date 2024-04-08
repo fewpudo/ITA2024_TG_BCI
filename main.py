@@ -16,10 +16,6 @@ data = scipy.io.loadmat('subjects/S1.mat')
 featureMatrix, full_featureMatrix = selectors.buildFeatureMatrix(data['data'])
 print(full_featureMatrix.shape)
 print(featureMatrix.shape)
-print(featureMatrix[3, 1].shape)
-plt.plot(full_featureMatrix[19, 0]) 
-plt.xlim(5, 30)
-plt.show()
 
 
 
