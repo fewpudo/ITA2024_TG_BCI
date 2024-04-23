@@ -20,15 +20,18 @@ def parametersSelector(data, freq: int, channel: int):
 def buildWindowedData(data, freq: int):
     channels = 3
     windows = 30
-    matrix = np.empty((30, 3), dtype=object)
+    matrix = np.empty((30, 12), dtype=object)
     full_data_matrix = np.empty((30, 3), dtype=object)
+
     for i in range(channels):
         temp = parametersSelector(data, freq, (i+60))
+
         for j in range(windows):
             new_data = abs(tools.fftTransform(temp[j*250:(j+1)*250]))
             max_data = [new_data[(8)], new_data[(10)], new_data[(12)], new_data[(15)]]
             full_data_matrix[j,i] = new_data
             matrix[j, i] = max_data
+            
     return matrix, full_data_matrix
 
 
