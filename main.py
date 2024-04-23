@@ -14,7 +14,7 @@ from utils import selectors, tools
 # Plotar imagens filtrados com CAR e filtrado sem CAR.
 # Verificar se o filtro notch é implementado pela placa e também se é disponibilizado pela API.
 
-# Separar cada vetor para cada canal, O1(8), O1(10), O1(12), O1(15) , OZ(8), OZ(10)...
+# Separar cada vetor para cada canal, O1(8), O1(10), O1(12), O1(15) , OZ(8), OZ(10)... -> Done
 # y = ax + 1x = (a+1)x
 # matrix A tem 13 colunas ao inves de 12, sendo a última coluna uma coluna de 1s (13 x 120)
 # separar minha matriz de atributos e colocar uma coluna de 1s no final
@@ -26,7 +26,9 @@ from utils import selectors, tools
 
 data = scipy.io.loadmat('subjects/S1.mat')
 featureMatrix, full_featureMatrix = selectors.buildFeatureMatrix(data['data'])
-print(full_featureMatrix.shape)
+fixedMatrix = selectors.refactorMatrix(featureMatrix)
+print(fixedMatrix.shape)
+print(fixedMatrix[2, 4])
 print(featureMatrix.shape)
 print(featureMatrix[2, 1])
 
