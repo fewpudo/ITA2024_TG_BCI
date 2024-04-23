@@ -1,6 +1,6 @@
 import scipy
 import matplotlib.pyplot as plt
-from utils import selectors, workers
+from utils import workers
 
 
 
@@ -20,9 +20,11 @@ from utils import selectors, workers
 # W tem 13x1 e Y tem a mesmo número de linhas de X
 
 data = scipy.io.loadmat('subjects/S1.mat')
-featureMatrix, full_featureMatrix = selectors.buildFeatureMatrix(data['data'])
-fixedMatrix = selectors.refactorMatrix(featureMatrix)
+featureMatrix, full_featureMatrix = workers.buildFeatureMatrix(data['data'])
+fixedMatrix = workers.refactorMatrix(featureMatrix)
 validationMatrix, testMatrix = workers.buildValidationAndTestMatrix(fixedMatrix)
+# print(workers.buildW8Matrix(fixedMatrix).shape)
+# print(workers.buildY8Matrix().shape)
 print(validationMatrix.shape)
 print(testMatrix.shape)
 
