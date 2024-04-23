@@ -18,13 +18,15 @@ def parametersSelector(data, freq: int, channel: int):
     return filtered_data
 
 # É possível fazer tudo dentro do for da buildWindowedData, mas acho que é melhor ficar separado para que eu consiga construir a matriz de formas diferentes
+# Adiciona 1's na coluna final
 def refactorMatrix(data):
     window = 120
     channels = 3
-    refactored_matrix = np.empty((120, 12), dtype=object)
+    refactored_matrix = np.empty((120, 13), dtype=object)
     for i in range(window):
         for j in range(channels):
             refactored_matrix[i, j*4:(j+1)*4] = data[i, j]
+            refactored_matrix[i, 12] = 1
     return refactored_matrix
 
 def buildWindowedData(data, freq: int):

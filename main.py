@@ -28,7 +28,7 @@ data = scipy.io.loadmat('subjects/S1.mat')
 featureMatrix, full_featureMatrix = selectors.buildFeatureMatrix(data['data'])
 fixedMatrix = selectors.refactorMatrix(featureMatrix)
 print(fixedMatrix.shape)
-print(fixedMatrix[2, 4])
+print(fixedMatrix[2, 12])
 print(featureMatrix.shape)
 print(featureMatrix[2, 1])
 
