@@ -1,6 +1,8 @@
 import scipy
 import matplotlib.pyplot as plt
 from utils import workers
+import numpy as np
+from sklearn.svm import LinearSVC
 
 
 
@@ -15,18 +17,25 @@ from utils import workers
 # Verificar se o filtro notch é implementado pela placa e também se é disponibilizado pela API.
 
 
-# func trainTestSplit(X, y, test_size=0.2, random_state=None) -> É bom já ter construído o Y antes de chamar essa função.
+# func trainTestSplit(X, y, test_size=0.2, random_state=None) -> É bom já ter construído o Y antes de chamar essa função. Usar o stratify on aqui! pois preserva a proporção dos dados.
+# Selecionar 80% de cada frequência para treino e 20% para teste, de forma aleatória. Pois está errado. -> done
+# Separar a matriz de label também. -> done
+# Organizar as matrizes de treino e validação de forma que fique mais simples criar os Y's. -> done
+# Criar a matriz de confusão = Quantas vezes o classificador acertou e quantas vezes errou.
+# Provavelmente tem a alguma função pronta que faz isso.
+# Calcular a acurácia
 
-# W tem 13x1 e Y tem a mesmo número de linhas de X
 
 data = scipy.io.loadmat('subjects/S1.mat')
 featureMatrix, full_featureMatrix = workers.buildFeatureMatrix(data['data'])
 fixedMatrix = workers.refactorMatrix(featureMatrix)
-validationMatrix, testMatrix = workers.buildValidationAndTestMatrix(fixedMatrix)
-# print(workers.buildW8Matrix(fixedMatrix).shape)
-# print(workers.buildY8Matrix().shape)
-print(validationMatrix.shape)
-print(testMatrix.shape)
+acuracy8, acuracy10, acuracy12, acuracy15 = workers.classifier(fixedMatrix)
+# plt.plot(fixedMatrix[:, 1])
+# plt.show()
+# print(acuracy8)
+# print(acuracy10)
+# print(acuracy12)
+# print(acuracy15)
 
 
 
@@ -35,10 +44,10 @@ print(testMatrix.shape)
 # print(featureMatrix.shape)
 # print(featureMatrix[2, 1])
 
-# Próximo passo: Implementar o modelo de classificação
 
 
 
 
 
-
+# Primeira parte do TG é explicar o sistema BCI-SSVEP, apresentar os algoritmos e colocar os dados da simulação.
+# Segunda parte é fazer o sistema Online -> Usar a toca e ler online.

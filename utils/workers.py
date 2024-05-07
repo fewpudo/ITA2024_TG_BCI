@@ -1,12 +1,15 @@
 import numpy as np
 from utils import selectors, tools
+from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 
-# verify if the data is correct
-# This function gets the data randomly and separates it into validation and test data 
-def buildValidationAndTestMatrix(data):
-    validationMatrix = data[np.random.choice(data.shape[0], 24, replace=False), :]
-    testMatrix = data[np.random.choice(np.setdiff1d(np.arange(data.shape[0]), validationMatrix[:, 0]), 96, replace=False), :]
-    return validationMatrix, testMatrix
+
+
+# Criar uma função que mostra qual o maior indíce da matriz de estimated_y de probabilidades
+# Melhorar essa função
+def buildValidationAndTestMatrix(data, y):
+    testMatrix, validationMatrix, yTest, yValidation = train_test_split(data, y, test_size=0.2, stratify=y)
+    return testMatrix, validationMatrix, yTest, yValidation
 
 # TODO: fix this logic
 def buildY8Matrix():
@@ -49,17 +52,43 @@ def buildYMatrix():
     return y8, y10, y12, y15
 
 
-def buildW8Matrix(data):
-    w_matrix = np.empty((13, 1))
-    pinvx = np.linalg.pinv(data)
-    y_matrix = buildY8Matrix()
-    w_matrix = np.dot(pinvx, y_matrix)
+def buildWMatrix(data, y_matrix):
+    pinvx = np.linalg.pinv(data.astype(np.float64))
+    w_matrix = np.matmul(pinvx, y_matrix)
     return w_matrix
 
 
 
+ # TODO: turn this into a freq depender
+def classifier(data):
+    y8, y10, y12, y15 = buildYMatrix()
+    test8Matrix, validation8Matrix, y8Test, y8Validation = buildValidationAndTestMatrix(data,y8)
+    test10Matrix, validation10Matrix, y10Test, y10Validation = buildValidationAndTestMatrix(data,y10)
+    test12Matrix, validation12Matrix, y12Test, y12Validation = buildValidationAndTestMatrix(data,y12)
+    test15Matrix, validation15Matrix, y15Test, y15Validation = buildValidationAndTestMatrix(data,y15)
+    w8, w10, w12, w15 = buildWMatrix(test8Matrix, y8Test), buildWMatrix(test10Matrix, y10Test), buildWMatrix(test12Matrix, y12Test), buildWMatrix(test15Matrix, y15Test)
+
+    estimated_y8 = np.matmul(validation8Matrix, w8)
+    estimated_y10 = np.matmul(validation10Matrix, w10)
+    estimated_y12 = np.matmul(validation12Matrix, w12)
+    estimated_y15 = np.matmul(validation15Matrix, w15)
+    
 
 
+    estimated_y8[estimated_y8 < 0] = -1
+    estimated_y8[estimated_y8 > 0] = 1
+    estimated_y10[estimated_y10 < 0] = -1
+    estimated_y10[estimated_y10 > 0] = 1
+    estimated_y12[estimated_y12 < 0] = -1
+    estimated_y12[estimated_y12 > 0] = 1
+    estimated_y15[estimated_y15 < 0] = -1
+    estimated_y15[estimated_y15 > 0] = 1
+    acuracia8 = np.sum(estimated_y8 == y8Validation) / len(y8Validation)
+    acuracia10 = np.sum(estimated_y10 == y10Validation) / len(y10Validation)
+    acuracia12 = np.sum(estimated_y12 == y12Validation) / len(y12Validation)
+    acuracia15 = np.sum(estimated_y15 == y15Validation) / len(y15Validation)
+    return acuracia8, acuracia10, acuracia12, acuracia15
+    
 
 
 # É possível fazer tudo dentro do for da buildWindowedData, mas acho que é melhor ficar separado para que eu consiga construir a matriz de formas diferentes
@@ -93,10 +122,10 @@ def buildWindowedData(data, freq: int):
 
 
 def buildFeatureMatrix(data):
-    first_freq, full_first_freq = buildWindowedData(data, 8)
-    second_freq, full_second_freq = buildWindowedData(data, 10)
-    third_freq, full_third_freq = buildWindowedData(data, 12)
-    fourth_freq, full_fourth_freq = buildWindowedData(data, 15)
+    first_freq, full_first_freq = buildWindowedData(data, 0)
+    second_freq, full_second_freq = buildWindowedData(data, 2)
+    third_freq, full_third_freq = buildWindowedData(data, 4)
+    fourth_freq, full_fourth_freq = buildWindowedData(data, 7)
 
     stacked_data = np.vstack((first_freq, second_freq, third_freq, fourth_freq))
     full_stacked_data = np.vstack((full_first_freq, full_second_freq, full_third_freq, full_fourth_freq))
