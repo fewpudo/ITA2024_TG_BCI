@@ -15,25 +15,32 @@ def buildValidationAndTestMatrix(data):
 
 
 def buildFeatureMatrix(data):
-    featureMatrix = np.ones((18*4,1250), dtype=object)
+    featureMatrix = np.ones((3*4,7500), dtype=object)
     EightHzMatrix = selectors.CarData(data,0)
     TenHzMatrix = selectors.CarData(data,2)
     TwelveHzMatrix = selectors.CarData(data,4)
     FifteenHzMatrix = selectors.CarData(data,7)
-    featureMatrix[0:18, :] = EightHzMatrix
-    featureMatrix[18:36, :] = TenHzMatrix
-    featureMatrix[36:54, :] = TwelveHzMatrix
-    featureMatrix[54:72, :] = FifteenHzMatrix
+    featureMatrix[0:3, :] = EightHzMatrix
+    featureMatrix[3:6, :] = TenHzMatrix
+    featureMatrix[6:9, :] = TwelveHzMatrix
+    featureMatrix[9:12, :] = FifteenHzMatrix
+    # adicionar 1s depois da fft
     ones = np.ones((1,1250), dtype=object)
     dataWithOnes = np.vstack((featureMatrix,ones))
-    fftTransformMatrix = abs(tools.fftTransform(dataWithOnes))
+    # Primeiro passo é aplicar a fft por canal e a cada 250 amostras.
+    # Isso vai me retornar um array de 250 amostras. No final da fft ainda vou ter um vetor de 12x7500
+    # Depois disso eu vou extrair as características. Preciso pegar os valores das frequencias 8, 10, 12 e 15 e suas harmônicas.
+    # Os pontos são os mesmos das frequências -> Amostra 8 é a frequência 8 Hz, amostra 16 é sua harmônica.
+    # No final, a minha featureMatrix tem que ter dimensão de 
+    for i in range(30):
+        fftTransformMatrix = abs(tools.fftTransform(featureMatrix[]))
     # Após a FFT o gráfico tá estranho
     # plt.plot(fftTransformMatrix[5,:])
     # plt.show()
     return fftTransformMatrix
 
 def buildLabelMatrix(data):
-    y = np.ones((12*6+1,1250), dtype=object)*-1
+    y = np.ones((13,1250), dtype=object)*-1
     for i in range(len(data[1])):
         index = np.argmax(data[:,i])
         y[index,i] = 1
@@ -48,10 +55,4 @@ def buildWMatrix(testMatrix, yTest):
 def Acuraccy(validationMatrix, W, yValidation):
     estimated_y = np.matmul(W, validationMatrix.T)
     estimated_y = np.sign(estimated_y)
-    print(estimated_y[:,0])
-    print(yValidation[0,:])
-    print(estimated_y.shape)
-    print(yValidation.shape)
-    acc = np.sum(estimated_y == yValidation.T)/(250*73)
-    print(acc)
 

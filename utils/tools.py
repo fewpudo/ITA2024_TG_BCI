@@ -35,6 +35,7 @@ def filterData(data) :
     res = CarFilter(notch_data)
     return res
 
+# Verificar essa função
 def fftTransform(data):
     fft_res = scipy.fft.fft(data)
     return fft_res

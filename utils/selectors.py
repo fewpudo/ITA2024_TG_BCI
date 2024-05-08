@@ -25,18 +25,24 @@ def CarData(data, freq: int):
         trial_data[:, i*1250:(i+1)*1250] = trialSelector(clean_data, i)
     
     filtered_data = np.zeros(trial_data.shape)
-
+    fftTrial = abs(tools.fftTransform(trial_data[61, 0:1250]))
+    x = np.linspace(0, 250, 1250, endpoint=False)
+    plt.plot(x, fftTrial)
     for i in range(len(trial_data[1])):
         filtered_data[:, i] = tools.CarFilter(trial_data, i)
+    fftFiltered = abs(tools.fftTransform(filtered_data[61, 0:1250]))
+    plt.plot(x, fftFiltered)
+    plt.xlim(3,33)
+    plt.show()
     channel_data = channelSelector(filtered_data)
-    separated_trial_by_column_data = separateEachTrialByColumn(channel_data)
-    print(separated_trial_by_column_data[4, 0:10])
-    return separated_trial_by_column_data
+    print(channel_data.shape)
+    return channel_data
 
-def separateEachTrialByColumn(data):
-    new_data = np.zeros((6*3, 1250)) 
-    for i in range(3):
-        for j in range(6):
-            new_data[j+6*i, :] = data[i , j*1250:(j+1)*1250]
-    return new_data
+# def separateEachTrialByColumn(data):
+#     new_data = np.zeros((6*3, 1250)) 
+#     for i in range(3):
+#         for j in range(6):
+#             new_data[j+6*i, :] = data[i , j*1250:(j+1)*1250]
+#     return new_data
     
+# Pro documento, como resultado da filtragem posso pegar esses gráficos com e sem CAR, marcar as frequências 8,10,12,15 e as harmônicas. Primeiro resultado
