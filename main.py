@@ -20,7 +20,8 @@ from sklearn.svm import LinearSVC
 
 data = scipy.io.loadmat('subjects/S1.mat')
 featureMatrix = workers.buildFeatureMatrix(data['data'])
-
+labelMatrix = workers.buildLabelMatrix(featureMatrix)
+WMatrix = workers.buildWMatrix(featureMatrix)
 
 
 # Primeira parte do TG é explicar o sistema BCI-SSVEP, apresentar os algoritmos e colocar os dados da simulação.
