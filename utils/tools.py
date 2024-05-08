@@ -13,7 +13,6 @@ def butterLowpassFilter(data, cutoff_freq, sample_freq, order=5):
 
 
 def notchFilter(data, cutoff_freq, sample_freq, Q):
-    
     nyquist_freq = 0.5 * sample_freq
     notch_freq = cutoff_freq / nyquist_freq
     b, a = iirnotch(notch_freq, Q)
@@ -21,9 +20,9 @@ def notchFilter(data, cutoff_freq, sample_freq, Q):
     return y
 
 
-def CarFilter(data):
-    channel_average = np.mean(data)
-    res = data - channel_average
+def CarFilter(data, sample):
+    channel_average = np.mean(data[:, sample])
+    res = data[:, sample] - channel_average
     return res
 
 

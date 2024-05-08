@@ -1,3 +1,4 @@
+from utils import selectors
 import scipy
 import matplotlib.pyplot as plt
 from utils import workers
@@ -17,35 +18,8 @@ from sklearn.svm import LinearSVC
 # Verificar se o filtro notch é implementado pela placa e também se é disponibilizado pela API.
 
 
-# func trainTestSplit(X, y, test_size=0.2, random_state=None) -> É bom já ter construído o Y antes de chamar essa função. Usar o stratify on aqui! pois preserva a proporção dos dados.
-# Selecionar 80% de cada frequência para treino e 20% para teste, de forma aleatória. Pois está errado. -> done
-# Separar a matriz de label também. -> done
-# Organizar as matrizes de treino e validação de forma que fique mais simples criar os Y's. -> done
-# Criar a matriz de confusão = Quantas vezes o classificador acertou e quantas vezes errou.
-# Provavelmente tem a alguma função pronta que faz isso.
-# Calcular a acurácia
-
-
 data = scipy.io.loadmat('subjects/S1.mat')
-featureMatrix, full_featureMatrix = workers.buildFeatureMatrix(data['data'])
-fixedMatrix = workers.refactorMatrix(featureMatrix)
-acuracy8, acuracy10, acuracy12, acuracy15 = workers.classifier(fixedMatrix)
-# plt.plot(fixedMatrix[:, 1])
-# plt.show()
-# print(acuracy8)
-# print(acuracy10)
-# print(acuracy12)
-# print(acuracy15)
-
-
-
-# print(fixedMatrix.shape)
-# print(fixedMatrix[2, 12])
-# print(featureMatrix.shape)
-# print(featureMatrix[2, 1])
-
-
-
+featureMatrix = workers.buildFeatureMatrix(data['data'])
 
 
 
