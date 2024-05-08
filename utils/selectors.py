@@ -1,5 +1,6 @@
 import numpy as np
 from utils import tools
+import matplotlib.pyplot as plt
 
 # 8 -> 0, 10 -> 2, 12 -> 4, 15 -> 7
 def frequencySelector(data ,freq: int):
@@ -20,7 +21,7 @@ def CarData(data, freq: int):
     clean_data = freq_data[: , 125:-125, :]
     trial_data = np.zeros((64, 6*1250)) 
 
-    for i in range(5):
+    for i in range(6):
         trial_data[:, i*1250:(i+1)*1250] = trialSelector(clean_data, i)
     
     filtered_data = np.zeros(trial_data.shape)
@@ -28,6 +29,14 @@ def CarData(data, freq: int):
     for i in range(len(trial_data[1])):
         filtered_data[:, i] = tools.CarFilter(trial_data, i)
     channel_data = channelSelector(filtered_data)
+    separated_trial_by_column_data = separateEachTrialByColumn(channel_data)
+    print(separated_trial_by_column_data[4, 0:10])
+    return separated_trial_by_column_data
 
-    return channel_data
-
+def separateEachTrialByColumn(data):
+    new_data = np.zeros((6*3, 1250)) 
+    for i in range(3):
+        for j in range(6):
+            new_data[j+6*i, :] = data[i , j*1250:(j+1)*1250]
+    return new_data
+    
