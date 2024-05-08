@@ -18,7 +18,7 @@ def channelSelector(data):
 def CarData(data, freq: int):
     freq_data = frequencySelector(data, freq)
     clean_data = freq_data[: , 125:-125, :]
-    trial_data = np.zeros((64*6, 1250)) 
+    trial_data = np.zeros((64, 6*1250)) 
 
     for i in range(5):
         trial_data[:, i*1250:(i+1)*1250] = trialSelector(clean_data, i)
