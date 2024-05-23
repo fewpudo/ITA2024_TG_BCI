@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 # Matrizes tem dimensão (1250 amostras) x (3 canais * 6 trials * 4 frequências + 1 coluna de uns) -> Posso ajustar rápido com a professora!
 def buildValidationAndTestMatrix(data):
     y = buildLabelMatrix(data)
-    testMatrix, validationMatrix, yTest, yValidation = train_test_split(data, y, test_size=0.2) 
+    testMatrix, validationMatrix, yTest, yValidation = train_test_split(data, y,random_state=30, test_size=0.2) 
     print(f"Matriz de teste: {testMatrix.shape}")
     print(f"Matriz de labels de validação: {yValidation.shape}")
     return testMatrix, validationMatrix, yTest, yValidation
@@ -62,13 +62,26 @@ def Acuraccy(validationMatrix, W, yValidation):
         estimated_y[i,index] = 1
         estimated_y[i,estimated_y[i,:] != 1] = -1
     print(f"Matriz de labels estimadas: {estimated_y.shape}")
+    print(f"Matriz de labels reais: {yValidation.shape}")
     accuracy = np.mean(estimated_y == yValidation)
-    
-    plt.plot(estimated_y[:,1])
-    plt.plot(yValidation[:,1])
-    plt.show()
     print(f"Accuracy: {accuracy*100}")
 
+def AcuraccyByFreq(validationMatrix, W, yValidation):
+    accuracy = np.array([0,0,0,0], dtype=object)
+    estimated_y = np.matmul(validationMatrix,W)
+    for i in range(estimated_y.shape[0]):
+        index = np.argmax(estimated_y[i,:])
+        estimated_y[i,index] = 1
+        estimated_y[i,estimated_y[i,:] != 1] = -1
+    
+    for i in range(4):
+        accuracy[i] = (np.sum(estimated_y[:,i] == yValidation[:,i])/len(yValidation[:,i]))*100
+        
+    print(f"Accuracy 8Hz: {accuracy[0]}")
+    print(f"Accuracy 10Hz: {accuracy[1]}")
+    print(f"Accuracy 12Hz: {accuracy[2]}")
+    print(f"Accuracy 15Hz: {accuracy[3]}")
+    return accuracy
 
 # dessa forma, os valores não ficam organizados por frequência, mas por janela! 4 valores da primeira janela, 4 valores da segunda janela e assim por diante.
 def CanalXfreqEvocada(data):
@@ -89,8 +102,6 @@ def CanalXfreqEvocada(data):
     return temp
 
 
-
-# Para fazer a fft para cada canal separadamente, basta inserir mais um for e inserir um índice no canal.
 def fftWindowAlternative(data):
     fft_res = np.zeros((12, 7500), dtype=object)
     for i in range(30):
