@@ -10,7 +10,9 @@ import matplotlib.pyplot as plt
 # Matrizes tem dimensão (1250 amostras) x (3 canais * 6 trials * 4 frequências + 1 coluna de uns) -> Posso ajustar rápido com a professora!
 def buildValidationAndTestMatrix(data):
     y = buildLabelMatrix(data)
-    testMatrix, validationMatrix, yTest, yValidation = train_test_split(data.T, y.T,random_state= 100, test_size=0.2) 
+    testMatrix, validationMatrix, yTest, yValidation = train_test_split(data, y, test_size=0.2) 
+    print(f"Matriz de teste: {testMatrix.shape}")
+    print(f"Matriz de labels de validação: {yValidation.shape}")
     return testMatrix, validationMatrix, yTest, yValidation
 
 
@@ -20,39 +22,79 @@ def buildFeatureMatrix(data):
     TenHzMatrix = selectors.CarData(data,2)
     TwelveHzMatrix = selectors.CarData(data,4)
     FifteenHzMatrix = selectors.CarData(data,7)
+
     featureMatrix[0:3, :] = EightHzMatrix
     featureMatrix[3:6, :] = TenHzMatrix
     featureMatrix[6:9, :] = TwelveHzMatrix
     featureMatrix[9:12, :] = FifteenHzMatrix
-    # adicionar 1s depois da fft
-    ones = np.ones((1,1250), dtype=object)
-    dataWithOnes = np.vstack((featureMatrix,ones))
-    # Primeiro passo é aplicar a fft por canal e a cada 250 amostras.
-    # Isso vai me retornar um array de 250 amostras. No final da fft ainda vou ter um vetor de 12x7500
-    # Depois disso eu vou extrair as características. Preciso pegar os valores das frequencias 8, 10, 12 e 15 e suas harmônicas.
-    # Os pontos são os mesmos das frequências -> Amostra 8 é a frequência 8 Hz, amostra 16 é sua harmônica.
-    # No final, a minha featureMatrix tem que ter dimensão de 
-    for i in range(30):
-        fftTransformMatrix = abs(tools.fftTransform(featureMatrix[]))
-    # Após a FFT o gráfico tá estranho
-    # plt.plot(fftTransformMatrix[5,:])
-    # plt.show()
-    return fftTransformMatrix
+
+    windowedData = fftWindowAlternative(featureMatrix)
+    
+    attributeMatrix = CanalXfreqEvocada(windowedData)
+
+    ones = np.ones((120,1), dtype=object)
+    dataWithOnes = np.hstack((attributeMatrix,ones))
+    
+    print(f"Matriz de atributos: {dataWithOnes.shape}")
+    return dataWithOnes
 
 def buildLabelMatrix(data):
-    y = np.ones((13,1250), dtype=object)*-1
-    for i in range(len(data[1])):
-        index = np.argmax(data[:,i])
-        y[index,i] = 1
+    y = np.ones((120,4), dtype=object)*-1
+    y[0:30,0] = 1
+    y[30:60,1] = 1
+    y[60:90,2] = 1
+    y[90:120,3] = 1
+    print(f"Matriz de labels: {y.shape}")
     return y
 
 def buildWMatrix(testMatrix, yTest):
     pinvX = np.linalg.pinv(testMatrix.astype(np.float64))
     W = np.matmul(pinvX, yTest)
-    print(W.shape)
     return W
 
 def Acuraccy(validationMatrix, W, yValidation):
-    estimated_y = np.matmul(W, validationMatrix.T)
-    estimated_y = np.sign(estimated_y)
+    print(f"Matriz W: {W.shape}")
+    print(f"Matriz de validação: {validationMatrix.shape}")
+    
+    estimated_y = np.matmul(validationMatrix,W)
+    for i in range(estimated_y.shape[0]):
+        index = np.argmax(estimated_y[i,:])
+        estimated_y[i,index] = 1
+        estimated_y[i,estimated_y[i,:] != 1] = -1
+    print(f"Matriz de labels estimadas: {estimated_y.shape}")
+    accuracy = np.mean(estimated_y == yValidation)
+    
+    plt.plot(estimated_y[:,1])
+    plt.plot(yValidation[:,1])
+    plt.show()
+    print(f"Accuracy: {accuracy*100}")
+
+
+# dessa forma, os valores não ficam organizados por frequência, mas por janela! 4 valores da primeira janela, 4 valores da segunda janela e assim por diante.
+def CanalXfreqEvocada(data):
+    temp = np.empty((120,12), dtype=object)
+    for i in range(30):
+        for j in range(3):
+            max_data = np.array([data[j, i*250+8], data[j, i*250+10], data[j, i*250+12], data[j, i*250+15]])
+            temp[i, 4*j:4*(j+1)] = max_data
+        for j in range(3):
+            max_data = np.array([data[j+3, i*250+8], data[j+3, i*250+10], data[j+3, i*250+12], data[j+3, i*250+15]])
+            temp[i+30, 4*j:4*(j+1)] = max_data
+        for j in range(3):
+            max_data = np.array([data[j+6, i*250+8], data[j+6, i*250+10], data[j+6, i*250+12], data[j+6, i*250+15]])
+            temp[i+60, 4*j:4*(j+1)] = max_data
+        for j in range(3):
+            max_data = np.array([data[j+9, i*250+8], data[j+9, i*250+10], data[j+9, i*250+12], data[j+9, i*250+15]])
+            temp[i+90, 4*j:4*(j+1)] = max_data
+    return temp
+
+
+
+# Para fazer a fft para cada canal separadamente, basta inserir mais um for e inserir um índice no canal.
+def fftWindowAlternative(data):
+    fft_res = np.zeros((12, 7500), dtype=object)
+    for i in range(30):
+        for j in range(12):
+            fft_res[j, i*250:(i+1)*250] = abs(tools.fftTransform(data[j, i*250:(i+1)*250]))
+    return fft_res
 

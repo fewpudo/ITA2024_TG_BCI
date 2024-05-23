@@ -12,6 +12,9 @@ def trialSelector(data, trial: int):
 def channelSelector(data):
     return data[60:63, :]
 
+# 64 (canais) x 1500(amostas) x 40(frequências) x 6 (trials)
+# 3 canais x 7500 amostras 
+
 # O problema é que eu estou usando o filtro CAR por cada canal separadamente. Preciso usar todos os canais juntos. Fazer separado por frequência e trial. -> Done
 # função CAR vai receber uma matriz de 1250x64 de cada frequência e cada trial -> Done
 # Primeiro passo eu seleciono a frequência, mata as 250 linhas 125 inicias e 125 finais, depois eu seleciono a trial e depois eu aplico o filtro CAR. -> Done
@@ -25,17 +28,11 @@ def CarData(data, freq: int):
         trial_data[:, i*1250:(i+1)*1250] = trialSelector(clean_data, i)
     
     filtered_data = np.zeros(trial_data.shape)
-    fftTrial = abs(tools.fftTransform(trial_data[61, 0:1250]))
-    x = np.linspace(0, 250, 1250, endpoint=False)
-    plt.plot(x, fftTrial)
+
     for i in range(len(trial_data[1])):
         filtered_data[:, i] = tools.CarFilter(trial_data, i)
-    fftFiltered = abs(tools.fftTransform(filtered_data[61, 0:1250]))
-    plt.plot(x, fftFiltered)
-    plt.xlim(3,33)
-    plt.show()
+    
     channel_data = channelSelector(filtered_data)
-    print(channel_data.shape)
     return channel_data
 
 # def separateEachTrialByColumn(data):

@@ -20,10 +20,8 @@ from sklearn.svm import LinearSVC
 
 data = scipy.io.loadmat('subjects/S1.mat')
 featureMatrix = workers.buildFeatureMatrix(data['data'])
-labelMatrix = workers.buildLabelMatrix(featureMatrix)
 testMatrix, validationMatrix, yTest, yValidation = workers.buildValidationAndTestMatrix(featureMatrix)
 WMatrix = workers.buildWMatrix(testMatrix, yTest)
-print(validationMatrix.shape)
 teste = workers.Acuraccy(validationMatrix, WMatrix, yValidation)
 
 
