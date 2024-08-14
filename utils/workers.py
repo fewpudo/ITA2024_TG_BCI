@@ -29,7 +29,33 @@ def buildFeatureMatrix(data):
     featureMatrix[9:12, :] = FifteenHzMatrix
 
     windowedData = fftWindowAlternative(featureMatrix)
+    # Plotting the graph
+    x = np.arange(30)
+    fig, axs = plt.subplots(2, 2, figsize=(10, 6))
+    axs[0, 0].plot(x, windowedData[0, 250:280], label='8Hz')
+    axs[0, 0].set_title('8Hz')
+    axs[0, 0].scatter([8, 10, 12, 15], [windowedData[0, 258], windowedData[0, 260], windowedData[0, 262], windowedData[0, 265]], color='red')
     
+    axs[0, 1].plot(x, windowedData[3, 250:280], label='10Hz')
+    axs[0, 1].set_title('10Hz')
+    axs[0, 1].scatter([8, 10, 12, 15], [windowedData[3, 258], windowedData[3, 260], windowedData[3, 262], windowedData[3, 265]], color='red')
+    
+    axs[1, 0].plot(x, windowedData[7, 250:280], label='12Hz')
+    axs[1, 0].set_title('12Hz')
+    axs[1, 0].scatter([8, 10, 12, 15], [windowedData[7, 258], windowedData[7, 260], windowedData[7, 262], windowedData[7, 265]], color='red')
+    
+    axs[1, 1].plot(x, windowedData[10, 250:280], label='15Hz')
+    axs[1, 1].set_title('15Hz')
+    axs[1, 1].scatter([8, 10, 12, 15], [windowedData[10, 258], windowedData[10, 260], windowedData[10, 262], windowedData[10, 265]], color='red')
+    for ax in axs.flat:
+        ax.set(xlabel='Frequência (Hz)', ylabel='Amplitude do sinal')
+        ax.legend()
+    plt.tight_layout()
+    plt.xlabel('Frequência (Hz)')
+    plt.ylabel('Amplitude do sinal')
+    plt.title('FFTs')
+    plt.show()
+
     attributeMatrix = CanalXfreqEvocada(windowedData)
 
     ones = np.ones((120,1), dtype=object)
