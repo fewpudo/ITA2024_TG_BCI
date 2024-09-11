@@ -1,12 +1,14 @@
-from utils import  tools
 import numpy as np
 
+from utils import tools
+
+# Não preciso janelar, janelas 
+
 # data chega num array de 8xAmostras
-data = np.random.rand(8, 2500) * 100
 samplingRate = 250
 
 def carFilter(data):
-    mean = np.mean(data, axis=1)
+    mean = np.mean(data, axis=0)
     car_data = data - mean.reshape(-1,1)
     return car_data
 
@@ -23,8 +25,8 @@ def standardizeData(data):
 
 def buildWindow(data, samplingRate, windowSize):
     data = standardizeData(data)
-    numberOfWindows = len(data[0])/(samplingRate*windowSize)
-    windowData = np.zeros((8, numberOfWindows))
+    numberOfWindows = len(data[0])//(samplingRate*windowSize)
+    windowData = np.zeros((8, numberOfWindows), dtype=object)
     for j in range(8):
         for i in range(numberOfWindows):
             windowData[j,i] = data[j,i*samplingRate*windowSize:(i+1)*samplingRate*windowSize]
@@ -62,6 +64,15 @@ def buildAnswerMatrix(maxFreqByChannel, demandedFrequency):
     answerMatrix = np.zeros((8, len(maxFreqByChannel[0])), dtype=object)
     for i in range(len(maxFreqByChannel[0])):
         for j in range(8):
-            answerMatrix[i,j] = demandedFrequency
+            answerMatrix[j,i] = demandedFrequency
     return answerMatrix
 
+
+def DataMain(data):
+    ans = mainDataPreparation(data)
+    y_online = buildOnlineLabel(ans)
+    y_answer = buildAnswerMatrix(y_online, 2)
+    print(y_online)
+
+
+DataMain(data)
