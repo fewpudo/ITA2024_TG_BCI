@@ -70,7 +70,7 @@ def plotFFTData(fft_res):
         plt.show()
 
 
-def plotAllChannelsFFTData(fft_res):
+def plotAllChannelsFFTData(fft_res, i):
     frequencies = [8, 10, 12, 15]
     plt.figure()
     for j in range(8):
@@ -83,8 +83,13 @@ def plotAllChannelsFFTData(fft_res):
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Amplitude')
     plt.xlim(5, 50)
-    plt.title('FFT Data for All Channels')
+    plt.title(f'FFT Data for All Channels window {i+1}')
     plt.legend()
     plt.show()
 
-plotAllChannelsFFTData(buildFFTData(data))
+for i in range(7):
+    plt.ion()  # Turn on interactive mode
+    plotAllChannelsFFTData(buildFFTData(data),i)
+    plt.pause(1)  # Pause to allow the plot to be updated
+plt.ioff()  # Turn off interactive mode
+plt.show()  # Keep all plots open
