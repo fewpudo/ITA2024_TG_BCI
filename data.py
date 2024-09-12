@@ -1,15 +1,16 @@
 import numpy as np
-
+import matplotlib.pyplot as plt
 from utils import tools
 
 # Não preciso janelar, janelas 
 
 # data chega num array de 8xAmostras
+data = np.random.rand(8, 250)
 samplingRate = 250
 
 def carFilter(data):
     mean = np.mean(data, axis=0)
-    car_data = data - mean.reshape(-1,1)
+    car_data = data - mean.reshape(1,-1)
     return car_data
 
 def standardizeData(data):
@@ -22,19 +23,16 @@ def standardizeData(data):
     return res
 
 # ------------------------------------------------------------------------------------------------------------------------------------------
-
-def buildWindow(data, samplingRate, windowSize):
-    data = standardizeData(data)
-    numberOfWindows = len(data[0])//(samplingRate*windowSize)
-    windowData = np.zeros((8, numberOfWindows), dtype=object)
-    for j in range(8):
-        for i in range(numberOfWindows):
-            windowData[j,i] = data[j,i*samplingRate*windowSize:(i+1)*samplingRate*windowSize]
-    return windowData
-
 def fftTransform(windowData):
     fft_res = np.fft.fft(windowData)
     return fft_res
+
+def buildFFTData(data):
+    standardizedData = standardizeData(data)
+    fftData = np.zeros((8, len(standardizedData[0])), dtype=object)
+    for i in range(8):
+        fftData[i] = abs(fftTransform(standardizedData[i,:]))
+    return fftData
 
 def getMaxOutFrequency(fft_res):
     maxFreqMatrix = np.zeros((8, len(fft_res[0])), dtype=object)
@@ -44,7 +42,7 @@ def getMaxOutFrequency(fft_res):
     return maxFreqMatrix
 
 def mainDataPreparation(data):
-    windowData = buildWindow(data, samplingRate, 1)
+    windowData = buildFFTData(data)
     fftData = np.zeros((8, len(windowData[0])), dtype=object)
     for j in range(8):
         for i in range(len(windowData[0])):
@@ -52,27 +50,41 @@ def mainDataPreparation(data):
     maxOut = getMaxOutFrequency(fftData)
     return maxOut
 
-def buildOnlineLabel(maxOut):
-    maxFreqByChannel = np.zeros((8, len(maxOut[0])), dtype=object)
-    for j in range(8):
-        for i in range(len(maxOut[0])):
-            index = np.argmax(maxOut[j,i])
-            maxFreqByChannel[j,i] = index+1
-    return maxFreqByChannel
-
-def buildAnswerMatrix(maxFreqByChannel, demandedFrequency):
-    answerMatrix = np.zeros((8, len(maxFreqByChannel[0])), dtype=object)
-    for i in range(len(maxFreqByChannel[0])):
-        for j in range(8):
-            answerMatrix[j,i] = demandedFrequency
-    return answerMatrix
-
 
 def DataMain(data):
     ans = mainDataPreparation(data)
-    y_online = buildOnlineLabel(ans)
-    y_answer = buildAnswerMatrix(y_online, 2)
-    print(y_online)
 
 
-DataMain(data)
+
+def plotFFTData(fft_res):
+    frequencies = [8, 10, 12, 15]
+    for j in range(8):
+        plt.figure()
+        plt.plot(np.abs(fft_res[j,:]))
+        for freq in frequencies:
+            plt.scatter(freq, np.abs(fft_res[j,freq]), color='red')
+        plt.xlabel('Frequency (Hz)')
+        plt.ylabel('Amplitude')
+        plt.xlim(5, 50)
+        plt.title(f'FFT Data for Channel {j+1}')
+        plt.show()
+
+
+def plotAllChannelsFFTData(fft_res):
+    frequencies = [8, 10, 12, 15]
+    plt.figure()
+    for j in range(8):
+        plt.plot(np.abs(fft_res[j,:]), label=f'Channel {j+1}')
+        for freq in frequencies:
+            plt.scatter(freq, np.abs(fft_res[j,freq]), color='red')
+            plt.scatter(freq*2, np.abs(fft_res[j,freq*2]), color='red')
+            plt.scatter(freq*3, np.abs(fft_res[j,freq*3]), color='red')
+            plt.scatter(freq*4, np.abs(fft_res[j,freq*4]), color='red')
+    plt.xlabel('Frequency (Hz)')
+    plt.ylabel('Amplitude')
+    plt.xlim(5, 50)
+    plt.title('FFT Data for All Channels')
+    plt.legend()
+    plt.show()
+
+plotAllChannelsFFTData(buildFFTData(data))
