@@ -63,6 +63,9 @@ def plotFFTData(fft_res):
         plt.plot(np.abs(fft_res[j,:]))
         for freq in frequencies:
             plt.scatter(freq, np.abs(fft_res[j,freq]), color='red')
+            plt.scatter(freq*2, np.abs(fft_res[j,freq*2]), color='red')
+            plt.scatter(freq*3, np.abs(fft_res[j,freq*3]), color='red')
+            plt.scatter(freq*4, np.abs(fft_res[j,freq*4]), color='red')
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Amplitude')
         plt.xlim(5, 50)
@@ -88,8 +91,9 @@ def plotAllChannelsFFTData(fft_res, i):
     plt.show()
 
 for i in range(7):
-    plt.ion()  # Turn on interactive mode
+    plt.ion()
     plotAllChannelsFFTData(buildFFTData(data),i)
-    plt.pause(1)  # Pause to allow the plot to be updated
-plt.ioff()  # Turn off interactive mode
-plt.show()  # Keep all plots open
+    plt.pause(2)
+print(data.shape)
+plt.ioff()
+plt.show()

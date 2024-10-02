@@ -4,24 +4,26 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 from data import plotAllChannelsFFTData, buildFFTData
-from openbci import cyton as bci
 
-# Configurações da Cyton
+params = BrainFlowInputParams()
+params.serial_port='/dev/tty.usbserial-DM00D434'
+board = BoardShim(BoardIds.CYTON_BOARD.value, params)
 
-board = bci.OpenBCICyton(daisy=False)
-
-
-# Inicialize a sessão
 try:
     board.prepare_session()
-
+    
     board.start_stream()
+
     for i in range(7):
+        print(f"Iteração número {i}")
         data = board.get_board_data(250)
+        print("Conseguiu pegar os dados")
         time.sleep(1.5)
         data_eeg = data[1:9,:]
-        plotAllChannelsFFTData(buildFFTData(data_eeg))
-
+        plt.ion()
+        plotAllChannelsFFTData(buildFFTData(data_eeg),i)
+    plt.ioff()
+    plt.show()
 
     board.stop_stream()
     board.release_session()
