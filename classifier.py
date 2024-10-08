@@ -1,10 +1,9 @@
-from utils import selectors
 import scipy
 import matplotlib.pyplot as plt
 from utils import workers
 import numpy as np
 from sklearn.svm import LinearSVC
-
+import featureMatrix as ft
 
 
 # dados
@@ -18,13 +17,23 @@ from sklearn.svm import LinearSVC
 # Verificar se o filtro notch é implementado pela placa e também se é disponibilizado pela API.
 
 # Indivíduo 15 é muito bom para pegar os dados, ele tem uma acurácia muito perto 100% no teste.
+
+channels = 3
+evokedFreqs = 4
+samplingRate = 250
+trials = 6
+trainningTime = 5
+
 def buildClassifier():
     acc = np.zeros((35,4), dtype=object)
-    for k in range(35):
-        subject = f"subjects/S{k+1}.mat"
+    for k in range(1):
+        subject = f"subjects/S{22}.mat"
         data = scipy.io.loadmat(subject)
-        featureMatrix = workers.buildFeatureMatrix(data['data'])
-        testMatrix, validationMatrix, yTest, yValidation = workers.buildValidationAndTestMatrix(featureMatrix)
+        # featureMatrix = workers.buildFeatureMatrix(data['data'], channels, evokedFreqs)
+        labelMatrix = workers.buildLabelMatrix(trainningTime, trials, evokedFreqs)
+        featureMatrix = ft.buildOnlineFeatureMatrix(data['data'], channels, evokedFreqs,samplingRate, trainningTime, trials)
+        testMatrix, validationMatrix, yTest, yValidation = workers.buildValidationAndTestMatrix(featureMatrix, labelMatrix)
+
         WMatrix = workers.buildWMatrix(testMatrix, yTest)
         acc[k,:] = workers.AcuraccyByFreq(validationMatrix, WMatrix, yValidation)
 
@@ -56,3 +65,5 @@ def buildClassifier():
 
     # Primeira parte do TG é explicar o sistema BCI-SSVEP, apresentar os algoritmos e colocar os dados da simulação.
     # Segunda parte é fazer o sistema Online -> Usar a toca e ler online.
+
+buildClassifier()

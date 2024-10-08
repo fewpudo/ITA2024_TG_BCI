@@ -1,5 +1,6 @@
 import numpy as np
-from utils import selectors, tools
+from . import helper
+from utils import tools
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
@@ -8,20 +9,19 @@ import matplotlib.pyplot as plt
 # Criar uma função que mostra qual o maior indíce da matriz de estimated_y de probabilidades
 # Melhorar essa função
 # Matrizes tem dimensão (1250 amostras) x (3 canais * 6 trials * 4 frequências + 1 coluna de uns) -> Posso ajustar rápido com a professora!
-def buildValidationAndTestMatrix(data):
-    y = buildLabelMatrix(data)
-    testMatrix, validationMatrix, yTest, yValidation = train_test_split(data, y,random_state=30, test_size=0.2) 
+def buildValidationAndTestMatrix(data, labelMatrix):
+    testMatrix, validationMatrix, yTest, yValidation = train_test_split(data, labelMatrix,random_state=30, test_size=0.2) 
     print(f"Matriz de teste: {testMatrix.shape}")
-    print(f"Matriz de labels de validação: {yValidation.shape}")
+    print(f"Matriz de labels de validacao: {yValidation.shape}")
     return testMatrix, validationMatrix, yTest, yValidation
 
-
-def buildFeatureMatrix(data):
-    featureMatrix = np.ones((3*4,7500), dtype=object)
-    EightHzMatrix = selectors.CarData(data,0)
-    TenHzMatrix = selectors.CarData(data,2)
-    TwelveHzMatrix = selectors.CarData(data,4)
-    FifteenHzMatrix = selectors.CarData(data,7)
+#oudated
+def buildFeatureMatrix(data, channels, evokedFreqs):
+    featureMatrix = np.ones((channels*evokedFreqs,7500), dtype=object)
+    EightHzMatrix = helper.CarData(data,0)
+    TenHzMatrix = helper.CarData(data,2)
+    TwelveHzMatrix = helper.CarData(data,4)
+    FifteenHzMatrix = helper.CarData(data,7)
 
     featureMatrix[0:3, :] = EightHzMatrix
     featureMatrix[3:6, :] = TenHzMatrix
@@ -64,18 +64,22 @@ def buildFeatureMatrix(data):
     print(f"Matriz de atributos: {dataWithOnes.shape}")
     return dataWithOnes
 
-def buildLabelMatrix(data):
-    y = np.ones((120,4), dtype=object)*-1
-    y[0:30,0] = 1
-    y[30:60,1] = 1
-    y[60:90,2] = 1
-    y[90:120,3] = 1
+
+def buildLabelMatrix(trainingTime, trials, evokedFreqs):
+    y = np.ones((trainingTime*trials*evokedFreqs,evokedFreqs), dtype=object)*-1
+    y[0:trainingTime*trials,0] = 1
+    y[trainingTime*trials:2*trainingTime*trials,1] = 1
+    y[2*trainingTime*trials:3*trainingTime*trials,2] = 1
+    y[3*trainingTime*trials:4*trainingTime*trials,3] = 1
     print(f"Matriz de labels: {y.shape}")
     return y
 
+
+#Função para construir a matrix de pesos, W a partir de um input X e uma label y
 def buildWMatrix(testMatrix, yTest):
     pinvX = np.linalg.pinv(testMatrix.astype(np.float64))
     W = np.matmul(pinvX, yTest)
+    print(f"Matriz W: {W.shape}")
     return W
 
 def Acuraccy(validationMatrix, W, yValidation):

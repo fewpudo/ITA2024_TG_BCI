@@ -1,12 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from utils import tools
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 # Não preciso janelar, janelas 
 
 # data chega num array de 8xAmostras
 data = np.random.rand(8, 250)
 samplingRate = 250
+freqs = 4
+
+def mockInputData():
+    data = np.random.rand(8, 250)
+    fftData = buildFFTData(data)
+    return fftData.reshape(1,-1)
+
 
 def carFilter(data):
     mean = np.mean(data, axis=0)
@@ -30,30 +40,13 @@ def fftTransform(windowData):
 def buildFFTData(data):
     standardizedData = standardizeData(data)
     fftData = np.zeros((8, len(standardizedData[0])), dtype=object)
+    res = np.zeros((8, freqs), dtype=object)
     for i in range(8):
         fftData[i] = abs(fftTransform(standardizedData[i,:]))
-    return fftData
-
-def getMaxOutFrequency(fft_res):
-    maxFreqMatrix = np.zeros((8, len(fft_res[0])), dtype=object)
-    for j in range(8):
-        for i in range(len(fft_res[0])):
-            maxFreqMatrix[j,i] = [fft_res[j,i][8], fft_res[j,i][10], fft_res[j,i][12], fft_res[j,i][15]]
-    return maxFreqMatrix
-
-def mainDataPreparation(data):
-    windowData = buildFFTData(data)
-    fftData = np.zeros((8, len(windowData[0])), dtype=object)
-    for j in range(8):
-        for i in range(len(windowData[0])):
-            fftData[j,i] = fftTransform(windowData[j,i])
-    maxOut = getMaxOutFrequency(fftData)
-    return maxOut
-
-
-def DataMain(data):
-    ans = mainDataPreparation(data)
-
+        res[i] = fftData[i][8], fftData[i][10], fftData[i][12], fftData[i][15]
+    ones = np.ones((1,4), dtype=object)
+    res = np.concatenate((res, ones), axis=0)
+    return res #Nesse momento tenho a FFT da janela inteira
 
 
 def plotFFTData(fft_res):
@@ -90,10 +83,50 @@ def plotAllChannelsFFTData(fft_res, i):
     plt.legend()
     plt.show()
 
-for i in range(7):
-    plt.ion()
-    plotAllChannelsFFTData(buildFFTData(data),i)
-    plt.pause(2)
-print(data.shape)
-plt.ioff()
-plt.show()
+
+def buildNewLabelMatrix(evokedFreq):
+    y = np.ones((9,freqs), dtype=object)*-1
+    for i in range(8):
+        y[i,evokedFreq-1] = 1
+    return y
+
+def createLinearClassifier(data, labels, x_entrada):
+    # Prepare the data
+    fftData = buildFFTData(data)
+    print(fftData.shape)
+    X = fftData.reshape(1,-1)  # Flatten the data
+    y = labels.reshape(1,-1)  # Flatten the labels
+    
+    # Create and train the classifier
+    pinvX = np.linalg.pinv(X.astype(np.float64))
+    print(pinvX.shape, y.shape)
+    W = np.matmul(pinvX,y)
+    
+    # Test the classifier
+    y_pred = np.matmul(x_entrada,W)
+    for i in range(y_pred.shape[0]):
+        index = np.argmax(y_pred[i,:])
+        y_pred[i,index] = 1
+        y_pred[i,y_pred[i,:] != 1] = -1
+    print(y_pred.shape)
+    print(W.shape)
+    return W
+
+# Função para utilizar o classificador criado no treinamento
+def classify(classifier, x_entrada):
+    y_pred = np.matmul(x_entrada, classifier)
+    for i in range(y_pred.shape[0]):
+        index = np.argmax(y_pred[i,:])
+        y_pred[i,index] = 1
+        y_pred[i,y_pred[i,:] != 1] = -1
+    return y_pred
+
+# Example usage
+x_teste = mockInputData()
+labels = buildNewLabelMatrix(1)
+classifier = createLinearClassifier(data, labels, x_teste) # Gera um classificador
+print(classifier.shape)
+
+print()
+# Dúvidas sobre a online:
+# Dimensão do W, o que significa cada linha?
