@@ -27,7 +27,7 @@ trainningTime = 5
 def buildClassifier():
     acc = np.zeros((35,4), dtype=object)
     for k in range(1):
-        subject = f"subjects/S{22}.mat"
+        subject = f"subjects/S{1}.mat"
         data = scipy.io.loadmat(subject)
         # featureMatrix = workers.buildFeatureMatrix(data['data'], channels, evokedFreqs)
         labelMatrix = workers.buildLabelMatrix(trainningTime, trials, evokedFreqs)

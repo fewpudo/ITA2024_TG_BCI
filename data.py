@@ -90,28 +90,6 @@ def buildNewLabelMatrix(evokedFreq):
         y[i,evokedFreq-1] = 1
     return y
 
-def createLinearClassifier(data, labels, x_entrada):
-    # Prepare the data
-    fftData = buildFFTData(data)
-    print(fftData.shape)
-    X = fftData.reshape(1,-1)  # Flatten the data
-    y = labels.reshape(1,-1)  # Flatten the labels
-    
-    # Create and train the classifier
-    pinvX = np.linalg.pinv(X.astype(np.float64))
-    print(pinvX.shape, y.shape)
-    W = np.matmul(pinvX,y)
-    
-    # Test the classifier
-    y_pred = np.matmul(x_entrada,W)
-    for i in range(y_pred.shape[0]):
-        index = np.argmax(y_pred[i,:])
-        y_pred[i,index] = 1
-        y_pred[i,y_pred[i,:] != 1] = -1
-    print(y_pred.shape)
-    print(W.shape)
-    return W
-
 # Função para utilizar o classificador criado no treinamento
 def classify(classifier, x_entrada):
     y_pred = np.matmul(x_entrada, classifier)
@@ -124,8 +102,6 @@ def classify(classifier, x_entrada):
 # Example usage
 x_teste = mockInputData()
 labels = buildNewLabelMatrix(1)
-classifier = createLinearClassifier(data, labels, x_teste) # Gera um classificador
-print(classifier.shape)
 
 print()
 # Dúvidas sobre a online:
