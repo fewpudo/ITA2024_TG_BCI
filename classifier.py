@@ -5,19 +5,7 @@ import numpy as np
 from sklearn.svm import LinearSVC
 import featureMatrix as ft
 
-
-# dados
-# [64, 1500, 40, 6]
-# 64 canais, 1500 amostras, 40 frequências, 6 testes diferentes
-# Particularidades desse dataset: Já vem filtrado com notch e o passa-baixas e, o formato dos dados exibidos é [6, 40, 1500, 64]
-# No aparelho será preciso aplicar o filtro notch também, não vem automaticamente. 
-
-# Pegar para o documento do TG, índice [2,1] já funciona.
-# Plotar imagens filtrados com CAR e filtrado sem CAR.
-# Verificar se o filtro notch é implementado pela placa e também se é disponibilizado pela API.
-
-# Indivíduo 15 é muito bom para pegar os dados, ele tem uma acurácia muito perto 100% no teste.
-
+# mock 
 channels = 3
 evokedFreqs = 4
 samplingRate = 250
@@ -66,4 +54,20 @@ def buildClassifier():
     # Primeira parte do TG é explicar o sistema BCI-SSVEP, apresentar os algoritmos e colocar os dados da simulação.
     # Segunda parte é fazer o sistema Online -> Usar a toca e ler online.
 
-buildClassifier()
+# Devo fazer treinamento e validação? Qual critério vou usar pra validar? O que fazer se não passar nesse critério?
+
+def buildWForOnline(data, channels, evokedFreqs, samplingRate, trainningTime, trials):
+    labelMatrix = workers.buildLabelMatrix(trainningTime, trials, evokedFreqs)
+    featureMatrix = ft.buildOnlineFeatureMatrix(data, channels, evokedFreqs,samplingRate, trainningTime, trials)
+    testMatrix, validationMatrix, yTest, yValidation = workers.buildValidationAndTestMatrix(featureMatrix, labelMatrix)
+    WMatrix = workers.buildWMatrix(testMatrix, yTest)
+    return WMatrix
+
+# Função para utilizar o classificador criado no treinamento
+def classify(classifier, x_entrada):
+    y_pred = np.matmul(x_entrada, classifier)
+    for i in range(y_pred.shape[0]):
+        index = np.argmax(y_pred[i,:])
+        y_pred[i,index] = 1
+        y_pred[i,y_pred[i,:] != 1] = -1
+    return y_pred

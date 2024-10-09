@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy
 from utils import tools
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
@@ -13,9 +14,9 @@ samplingRate = 250
 freqs = 4
 
 def mockInputData():
-    data = np.random.rand(8, 250)
-    fftData = buildFFTData(data)
-    return fftData.reshape(1,-1)
+    subject = f"subjects/S{1}.mat"
+    data = scipy.io.loadmat(subject)
+    return data['data']
 
 
 def carFilter(data):
@@ -89,20 +90,3 @@ def buildNewLabelMatrix(evokedFreq):
     for i in range(8):
         y[i,evokedFreq-1] = 1
     return y
-
-# Função para utilizar o classificador criado no treinamento
-def classify(classifier, x_entrada):
-    y_pred = np.matmul(x_entrada, classifier)
-    for i in range(y_pred.shape[0]):
-        index = np.argmax(y_pred[i,:])
-        y_pred[i,index] = 1
-        y_pred[i,y_pred[i,:] != 1] = -1
-    return y_pred
-
-# Example usage
-x_teste = mockInputData()
-labels = buildNewLabelMatrix(1)
-
-print()
-# Dúvidas sobre a online:
-# Dimensão do W, o que significa cada linha?
