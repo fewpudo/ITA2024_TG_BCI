@@ -7,7 +7,12 @@ import classifier
 from data import plotAllChannelsFFTData, buildFFTData
 import data
 
-def trainningAcquisition(trainningTime, channels, evokedFreqs, trials, is_trainning):
+
+# Permitir escolher quais canais serão utilizados
+# Permitir escolher quais frequências serão utilizadas
+
+
+def trainningAcquisition(trainningTime, channels, evokedFreqs, trials):
     # params = BrainFlowInputParams()
     # params.serial_port='/dev/tty.usbserial-DM00D434'
     # board = BoardShim(BoardIds.CYTON_BOARD.value, params)

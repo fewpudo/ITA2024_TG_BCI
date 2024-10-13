@@ -6,7 +6,6 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
-# Não preciso janelar, janelas 
 
 # data chega num array de 8xAmostras
 data = np.random.rand(8, 250)
