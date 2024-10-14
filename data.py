@@ -12,11 +12,11 @@ data = np.random.rand(8, 250)
 samplingRate = 250
 freqs = 4
 
-def mockInputData():
+def mockInputData(trial):
     subject = f"subjects/S{1}.mat"
     data = scipy.io.loadmat(subject)
     data = data['data']
-    data = data[0:64, 0:1500]
+    data = data[0:64, 0:1250, :, trial]
     return data
 
 

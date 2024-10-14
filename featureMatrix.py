@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 def frequencySelector(data ,freq: int):
-    return data[:, :, freq, :]
+    return data[:, :, freq]
 
 def trialSelector(data, trial: int):
     return data[:, :, trial]
@@ -13,18 +13,13 @@ def trialSelector(data, trial: int):
 def channelSelector(data, channels):
     return data[60:60+channels, :]
 
-def NewCarData(data, freq, trials,channels, samplingRate, trainingTime):
+def NewCarData(data, freq, channels, samplingRate, trainingTime):
     freq_data = frequencySelector(data, freq)
-    clean_data = freq_data[: , 125:-125, :]
-    trial_data = np.zeros((64, trials*samplingRate*trainingTime)) # trocar o chumbado 64 para a quantidade de canais total.
+   
+    filtered_data = np.zeros(freq_data.shape)
 
-    for i in range(trials):
-        trial_data[:, i*samplingRate*trainingTime:(i+1)*samplingRate*trainingTime] = trialSelector(clean_data, i)
-    
-    filtered_data = np.zeros(trial_data.shape)
-
-    for i in range(len(trial_data[1])):
-        filtered_data[:, i] = tools.CarFilter(trial_data, i)
+    for i in range(len(freq_data[1])):
+        filtered_data[:, i] = tools.CarFilter(freq_data, i)
     
     channel_data = channelSelector(filtered_data, channels)
     return channel_data
@@ -60,10 +55,10 @@ def buildOnlineFeatureMatrix(data, channels, evokedFreqs, samplingRate, training
 
     featureMatrix = np.ones((channels*evokedFreqs,samplingRate*trainingTime*trials), dtype=object)
 
-    EightHzMatrix = NewCarData(data,0,trials,channels,samplingRate,trainingTime)
-    TenHzMatrix = NewCarData(data,2,trials,channels,samplingRate,trainingTime)
-    TwelveHzMatrix = NewCarData(data,4,trials,channels,samplingRate,trainingTime)
-    FifteenHzMatrix = NewCarData(data,7,trials,channels,samplingRate,trainingTime)
+    EightHzMatrix = NewCarData(data,0,channels,samplingRate,trainingTime)
+    TenHzMatrix = NewCarData(data,2,channels,samplingRate,trainingTime)
+    TwelveHzMatrix = NewCarData(data,4,channels,samplingRate,trainingTime)
+    FifteenHzMatrix = NewCarData(data,7,channels,samplingRate,trainingTime)
 
     # Particular para a quantidade de frequências evocadas.
     featureMatrix[0:channels, :] = EightHzMatrix

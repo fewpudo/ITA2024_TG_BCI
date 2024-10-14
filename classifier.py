@@ -17,16 +17,12 @@ def buildClassifier():
     for k in range(1):
         subject = f"subjects/S{1}.mat"
         data = scipy.io.loadmat(subject)
-        # featureMatrix = workers.buildFeatureMatrix(data['data'], channels, evokedFreqs)
         labelMatrix = workers.buildLabelMatrix(trainningTime, trials, evokedFreqs)
         featureMatrix = ft.buildOnlineFeatureMatrix(data['data'], channels, evokedFreqs,samplingRate, trainningTime, trials)
         testMatrix, validationMatrix, yTest, yValidation = workers.buildValidationAndTestMatrix(featureMatrix, labelMatrix)
 
         WMatrix = workers.buildWMatrix(testMatrix, yTest)
         acc[k,:] = workers.AcuraccyByFreq(validationMatrix, WMatrix, yValidation)
-
-    # Construir a tabela com 4 colunas e 35 linhas
-    # Exportar a tabela para um arquivo xls
 
     table = acc
     column_titles = ['8hz', '10Hz', '12Hz', '15Hz']
@@ -50,11 +46,6 @@ def buildClassifier():
     # Imprimir a tabela formatada
     for row in table:
         print('\t'.join(str(cell) for cell in row))
-
-    # Primeira parte do TG é explicar o sistema BCI-SSVEP, apresentar os algoritmos e colocar os dados da simulação.
-    # Segunda parte é fazer o sistema Online -> Usar a toca e ler online.
-
-# Devo fazer treinamento e validação? Qual critério vou usar pra validar? O que fazer se não passar nesse critério?
 
 def buildWForOnline(data, channels, evokedFreqs, samplingRate, trainningTime, trials):
     labelMatrix = workers.buildLabelMatrix(trainningTime, trials, evokedFreqs)

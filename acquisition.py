@@ -12,7 +12,7 @@ import data
 # Permitir escolher quais frequências serão utilizadas
 
 
-def trainningAcquisition(trainningTime):
+def trainningAcquisition(trainningTime, trial): #Retirar Trial
     # params = BrainFlowInputParams()
     # params.serial_port='/dev/tty.usbserial-DM00D434'
     # board = BoardShim(BoardIds.CYTON_BOARD.value, params)
@@ -23,7 +23,7 @@ def trainningAcquisition(trainningTime):
 
         # data = board.get_board_data(sampling_rate*trainningTime) # data de cada janela
         # data_eeg = data[1:9,:]
-        data_eeg = data.mockInputData()
+        data_eeg = data.mockInputData(trial)
         
         # board.stop_stream()
         # board.release_session()
