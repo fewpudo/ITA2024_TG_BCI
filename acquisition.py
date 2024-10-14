@@ -12,11 +12,10 @@ import data
 # Permitir escolher quais frequências serão utilizadas
 
 
-def trainningAcquisition(trainningTime, channels, evokedFreqs, trials):
+def trainningAcquisition(trainningTime):
     # params = BrainFlowInputParams()
     # params.serial_port='/dev/tty.usbserial-DM00D434'
     # board = BoardShim(BoardIds.CYTON_BOARD.value, params)
-    sampling_rate = 250
     try:
         # board.prepare_session()
         # board.start_stream()
@@ -24,11 +23,11 @@ def trainningAcquisition(trainningTime, channels, evokedFreqs, trials):
 
         # data = board.get_board_data(sampling_rate*trainningTime) # data de cada janela
         # data_eeg = data[1:9,:]
-        w = classifier.buildWForOnline(data.mockInputData(), channels, evokedFreqs, sampling_rate, trainningTime, trials)
+        data_eeg = data.mockInputData()
         
         # board.stop_stream()
         # board.release_session()
-        return w
+        return data_eeg
     except Exception as e:
         print("Ocorreu um erro durante a aquisição de dados:", str(e))
         # board.release_session()

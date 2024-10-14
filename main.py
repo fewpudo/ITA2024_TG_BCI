@@ -1,7 +1,10 @@
 import pickle
 import customtkinter as ctk
+import numpy as np
 import acquisition
+import classifier
 
+sampling_rate = 250
 class InitialSelection(ctk.CTk):
     def __init__(self):
         super().__init__()
@@ -51,13 +54,34 @@ class TrainingApp(ctk.CTk):
         self.confirm_button = ctk.CTkButton(self, text="Confirmar", command=self.confirm_selection)
         self.confirm_button.pack(pady=20)
 
+
     def confirm_selection(self):
-        frequencies = list(map(int, self.freq_entry.get().split(',')))
-        trainningTime = int(self.trainningTime_entry.get())
-        channels = int(self.channels_entry.get())
-        trials = int(self.trials_entry.get())
-        w = acquisition.trainningAcquisition(trainningTime, channels, len(frequencies), trials)
-        print("Treinamento concluído")
+        # frequencies = list(map(int, self.freq_entry.get().split(',')))
+        # trainningTime = int(self.trainningTime_entry.get())
+        # channels = int(self.channels_entry.get())
+        # trials = int(self.trials_entry.get())
+        frequencies = [8, 10, 12, 15]
+        trainningTime = 5
+        channels = 3
+        trials = 6
+        data_eeg = np.zeros((64, trainningTime*trials*sampling_rate, 40, 6), dtype=object)
+
+        for trial in range(trials):
+            messagebox = ctk.CTkLabel(self, text=f"Trial {trial + 1} de {trials} concluído. Pressione Confirmar para iniciar o próximo trial.")
+            messagebox.pack(pady=10)
+            confirm_next_trial_button = ctk.CTkButton(self, text="Confirmar", command=messagebox.destroy)
+            confirm_next_trial_button.pack(pady=10)
+            confirm_next_trial_button._clicked = ctk.IntVar()
+            confirm_next_trial_button.configure(command=lambda: confirm_next_trial_button._clicked.set(1))
+            self.wait_variable(confirm_next_trial_button._clicked)
+            confirm_next_trial_button.destroy()
+            messagebox.destroy()
+
+            data = acquisition.trainningAcquisition(trainningTime)
+            data_eeg[:, trial*sampling_rate*trainningTime:(trial+1)*sampling_rate*trainningTime] = data
+        #Problem with the data_eeg shape
+        w = classifier.buildWForOnline(data_eeg, channels, len(frequencies), sampling_rate, trainningTime, trials)
+
         # Salvar o classificador 'w' para uso posterior
         with open("classifier.pkl", "wb") as f:
             pickle.dump(w, f)

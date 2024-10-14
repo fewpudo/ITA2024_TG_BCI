@@ -15,7 +15,9 @@ freqs = 4
 def mockInputData():
     subject = f"subjects/S{1}.mat"
     data = scipy.io.loadmat(subject)
-    return data['data']
+    data = data['data']
+    data = data[0:64, 0:1500]
+    return data
 
 
 def carFilter(data):
