@@ -66,7 +66,7 @@ def buildFeatureMatrix(data, channels, evokedFreqs):
 
 
 def buildLabelMatrix(trainingTime, trials, evokedFreqs):
-    y = np.ones((trainingTime*trials*evokedFreqs,evokedFreqs), dtype=object)*-1
+    y = np.ones((trainingTime*trials*len(evokedFreqs),len(evokedFreqs)), dtype=object)*-1
     y[0:trainingTime*trials,0] = 1
     y[trainingTime*trials:2*trainingTime*trials,1] = 1
     y[2*trainingTime*trials:3*trainingTime*trials,2] = 1

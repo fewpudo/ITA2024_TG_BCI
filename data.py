@@ -16,7 +16,7 @@ def mockInputData(trial):
     subject = f"subjects/S{1}.mat"
     data = scipy.io.loadmat(subject)
     data = data['data']
-    data = data[0:64, 0:1250, :, trial]
+    data = data[0:8, 0:1250, 0, trial]
     return data
 
 

@@ -52,6 +52,7 @@ def buildWForOnline(data, channels, evokedFreqs, samplingRate, trainningTime, tr
     featureMatrix = ft.buildOnlineFeatureMatrix(data, channels, evokedFreqs,samplingRate, trainningTime, trials)
     testMatrix, validationMatrix, yTest, yValidation = workers.buildValidationAndTestMatrix(featureMatrix, labelMatrix)
     WMatrix = workers.buildWMatrix(testMatrix, yTest)
+    
     return WMatrix
 
 # Função para utilizar o classificador criado no treinamento

@@ -64,23 +64,24 @@ class TrainingApp(ctk.CTk):
         trainningTime = 5
         channels = 3
         trials = 6
-        data_eeg = np.zeros((64, trainningTime*trials*sampling_rate,40), dtype=object)
+        data_eeg = np.zeros((8, trainningTime*trials*sampling_rate,len(frequencies)), dtype=object)
+        for freq in frequencies:
+            for trial in range(trials):
+                data = acquisition.trainningAcquisition(trainningTime, trial)
+                data_eeg[:, trial*sampling_rate*trainningTime:(trial+1)*sampling_rate*trainningTime, frequencies.index(freq)] = data
 
-        for trial in range(trials):
-            data = acquisition.trainningAcquisition(trainningTime, trial)
-            data_eeg[:, trial*sampling_rate*trainningTime:(trial+1)*sampling_rate*trainningTime] = data
-            messagebox = ctk.CTkLabel(self, text=f"Trial {trial + 1} de {trials} concluído. Pressione Confirmar para iniciar o próximo trial.")
-            messagebox.pack(pady=10)
-            confirm_next_trial_button = ctk.CTkButton(self, text="Confirmar", command=messagebox.destroy)
-            confirm_next_trial_button.pack(pady=10)
-            confirm_next_trial_button._clicked = ctk.IntVar()
-            confirm_next_trial_button.configure(command=lambda: confirm_next_trial_button._clicked.set(1))
-            self.wait_variable(confirm_next_trial_button._clicked)
-            confirm_next_trial_button.destroy()
-            messagebox.destroy()
+                messagebox = ctk.CTkLabel(self, text=f"{freq} Hz - Trial {trial + 1} de {trials} concluído. Pressione Confirmar para iniciar o próximo trial.")
+                messagebox.pack(pady=10)
+                confirm_next_trial_button = ctk.CTkButton(self, text="Confirmar", command=messagebox.destroy)
+                confirm_next_trial_button.pack(pady=10)
+                confirm_next_trial_button._clicked = ctk.IntVar()
+                confirm_next_trial_button.configure(command=lambda: confirm_next_trial_button._clicked.set(1))
+                self.wait_variable(confirm_next_trial_button._clicked)
+                confirm_next_trial_button.destroy()
+                messagebox.destroy()
 
         #Problem with the data_eeg shape
-        w = classifier.buildWForOnline(data_eeg, channels, len(frequencies), sampling_rate, trainningTime, trials)
+        w = classifier.buildWForOnline(data_eeg, channels, frequencies, sampling_rate, trainningTime, trials)
 
         # Salvar o classificador 'w' para uso posterior
         with open("classifier.pkl", "wb") as f:

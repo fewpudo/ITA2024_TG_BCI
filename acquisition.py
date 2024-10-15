@@ -19,7 +19,7 @@ def trainningAcquisition(trainningTime, trial): #Retirar Trial
     try:
         # board.prepare_session()
         # board.start_stream()
-        time.sleep(trainningTime)
+        # time.sleep(trainningTime)
 
         # data = board.get_board_data(sampling_rate*trainningTime) # data de cada janela
         # data_eeg = data[1:9,:]
