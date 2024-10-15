@@ -67,6 +67,8 @@ class TrainingApp(ctk.CTk):
         data_eeg = np.zeros((64, trainningTime*trials*sampling_rate,40), dtype=object)
 
         for trial in range(trials):
+            data = acquisition.trainningAcquisition(trainningTime, trial)
+            data_eeg[:, trial*sampling_rate*trainningTime:(trial+1)*sampling_rate*trainningTime] = data
             messagebox = ctk.CTkLabel(self, text=f"Trial {trial + 1} de {trials} concluído. Pressione Confirmar para iniciar o próximo trial.")
             messagebox.pack(pady=10)
             confirm_next_trial_button = ctk.CTkButton(self, text="Confirmar", command=messagebox.destroy)
@@ -77,8 +79,6 @@ class TrainingApp(ctk.CTk):
             confirm_next_trial_button.destroy()
             messagebox.destroy()
 
-            data = acquisition.trainningAcquisition(trainningTime, trial)
-            data_eeg[:, trial*sampling_rate*trainningTime:(trial+1)*sampling_rate*trainningTime] = data
         #Problem with the data_eeg shape
         w = classifier.buildWForOnline(data_eeg, channels, len(frequencies), sampling_rate, trainningTime, trials)
 
