@@ -27,13 +27,11 @@ def buildClassifier():
     table = acc
     column_titles = ['8hz', '10Hz', '12Hz', '15Hz']
 
-    # Imprimir a tabela
     for i in range(len(table)):
         for j in range(len(table[i])):
             table[i][j] = "{:.2f}".format(float(table[i][j]))
             
 
-    # Color cells with values above 75 green and round to two decimal places
     for i in range(0, len(table)):
         for j in range(0, len(table[i])):
             if float(table[i][j]) >= 75:
@@ -43,7 +41,6 @@ def buildClassifier():
             else:
                 table[i][j] = '\033[91m' + "{:.2f}".format(float(table[i][j])) + '\033[0m'
 
-    # Imprimir a tabela formatada
     for row in table:
         print('\t'.join(str(cell) for cell in row))
 
@@ -52,10 +49,10 @@ def buildWForOnline(data, channels, evokedFreqs, samplingRate, trainningTime, tr
     featureMatrix = ft.buildOnlineFeatureMatrix(data, channels, evokedFreqs,samplingRate, trainningTime, trials)
     testMatrix, validationMatrix, yTest, yValidation = workers.buildValidationAndTestMatrix(featureMatrix, labelMatrix)
     WMatrix = workers.buildWMatrix(testMatrix, yTest)
-    
-    return WMatrix
+    acc = workers.AcuraccyByFreq(validationMatrix, WMatrix, yValidation)
 
-# Função para utilizar o classificador criado no treinamento
+    return WMatrix, acc
+
 def classify(classifier, x_entrada):
     y_pred = np.matmul(x_entrada, classifier)
     for i in range(y_pred.shape[0]):

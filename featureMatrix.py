@@ -50,7 +50,6 @@ def NewCanalXfreqEvocada(data, trainingTime, trials, channels, evokedFreqs, samp
     return temp
 
 
-# Função mais parametrizada para criar a matriz de atributos.
 def buildOnlineFeatureMatrix(data, channels, evokedFreqs, samplingRate, trainingTime, trials):
 
     featureMatrix = np.ones((channels*len(evokedFreqs),samplingRate*trainingTime*trials), dtype=object)
@@ -58,36 +57,27 @@ def buildOnlineFeatureMatrix(data, channels, evokedFreqs, samplingRate, training
     for freq in evokedFreqs:
         evokedFreqMatrix = NewCarData(data,evokedFreqs.index(freq),channels)
         featureMatrix[evokedFreqs.index(freq)*channels:(evokedFreqs.index(freq)+1)*channels, :] = evokedFreqMatrix
-    # EightHzMatrix = NewCarData(data,evokedFreqs[0],channels)
-    # TenHzMatrix = NewCarData(data,evokedFreqs[1],channels)
-    # TwelveHzMatrix = NewCarData(data,evokedFreqs[2],channels)
-    # FifteenHzMatrix = NewCarData(data,evokedFreqs[3],channels)
-
-    # # Particular para a quantidade de frequências evocadas.
-    # featureMatrix[0:channels, :] = EightHzMatrix
-    # featureMatrix[channels:2*channels, :] = TenHzMatrix
-    # featureMatrix[2*channels:3*channels, :] = TwelveHzMatrix
-    # featureMatrix[3*channels:4*channels, :] = FifteenHzMatrix
 
     windowedData = NewfftWindowAlternative(featureMatrix, trials, channels, evokedFreqs, samplingRate, trainingTime)
-    # Plotting the graph
+    
+    # Escolhemos 1 canal para cada frequência evocada e plotamos o sinal.
     x = np.arange(30)
     fig, axs = plt.subplots(2, 2, figsize=(10, 6))
-    axs[0, 0].plot(x, windowedData[0, samplingRate:samplingRate+30], label='8Hz')
+    axs[0, 0].plot(x, windowedData[0, samplingRate:samplingRate+30], label=f'{evokedFreqs[0]}Hz')
     axs[0, 0].set_title(f'{evokedFreqs[0]}Hz')
-    axs[0, 0].scatter([8, 10, 12, 15], [windowedData[0, samplingRate+8], windowedData[0, samplingRate+10], windowedData[0, samplingRate+12], windowedData[0, samplingRate+15]], color='red')
+    axs[0, 0].scatter(evokedFreqs, [windowedData[0, samplingRate+8], windowedData[0, samplingRate+10], windowedData[0, samplingRate+12], windowedData[0, samplingRate+15]], color='red')
     
-    axs[0, 1].plot(x, windowedData[3, samplingRate:samplingRate+30], label='10Hz')
+    axs[0, 1].plot(x, windowedData[3, samplingRate:samplingRate+30], label=f'{evokedFreqs[1]}Hz')
     axs[0, 1].set_title(f'{evokedFreqs[1]}Hz')
-    axs[0, 1].scatter([8, 10, 12, 15], [windowedData[3, samplingRate+8], windowedData[3, samplingRate+10], windowedData[3, samplingRate+12], windowedData[3, samplingRate+15]], color='red')
+    axs[0, 1].scatter(evokedFreqs, [windowedData[3, samplingRate+8], windowedData[3, samplingRate+10], windowedData[3, samplingRate+12], windowedData[3, samplingRate+15]], color='red')
     
-    axs[1, 0].plot(x, windowedData[7, samplingRate:samplingRate+30], label='12Hz')
+    axs[1, 0].plot(x, windowedData[7, samplingRate:samplingRate+30], label=f'{evokedFreqs[2]}Hz')
     axs[1, 0].set_title(f'{evokedFreqs[2]}Hz')
-    axs[1, 0].scatter([8, 10, 12, 15], [windowedData[7, samplingRate+8], windowedData[7, samplingRate+10], windowedData[7, samplingRate+12], windowedData[7, samplingRate+15]], color='red')
+    axs[1, 0].scatter(evokedFreqs, [windowedData[7, samplingRate+8], windowedData[7, samplingRate+10], windowedData[7, samplingRate+12], windowedData[7, samplingRate+15]], color='red')
     
-    axs[1, 1].plot(x, windowedData[10, samplingRate:samplingRate+30], label='15Hz')
+    axs[1, 1].plot(x, windowedData[10, samplingRate:samplingRate+30], label=f'{evokedFreqs[3]}Hz')
     axs[1, 1].set_title(f'{evokedFreqs[3]}Hz')
-    axs[1, 1].scatter([8, 10, 12, 15], [windowedData[10, samplingRate+8], windowedData[10, samplingRate+10], windowedData[10, samplingRate+12], windowedData[10, samplingRate+15]], color='red')
+    axs[1, 1].scatter(evokedFreqs, [windowedData[10, samplingRate+8], windowedData[10, samplingRate+10], windowedData[10, samplingRate+12], windowedData[10, samplingRate+15]], color='red')
     for ax in axs.flat:
         ax.set(xlabel='Frequência (Hz)', ylabel='Amplitude do sinal')
         ax.legend()

@@ -7,7 +7,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 
-# data chega num array de 8xAmostras
 data = np.random.rand(8, 250)
 samplingRate = 250
 freqs = 4
@@ -48,7 +47,7 @@ def buildFFTData(data):
         res[i] = fftData[i][8], fftData[i][10], fftData[i][12], fftData[i][15]
     ones = np.ones((1,4), dtype=object)
     res = np.concatenate((res, ones), axis=0)
-    return res #Nesse momento tenho a FFT da janela inteira
+    return res
 
 
 def plotFFTData(fft_res):

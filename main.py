@@ -20,6 +20,7 @@ class InitialSelection(ctk.CTk):
         self.online_button = ctk.CTkButton(self, text="Aquisição Online", command=self.start_online)
         self.online_button.pack(pady=10)
 
+
     def start_training(self):
         self.destroy()
         app = TrainingApp()
@@ -62,7 +63,7 @@ class TrainingApp(ctk.CTk):
         # trials = int(self.trials_entry.get())
         frequencies = [8, 10, 12, 15]
         trainningTime = 5
-        channels = 3
+        channels = 8
         trials = 6
         data_eeg = np.zeros((8, trainningTime*trials*sampling_rate,len(frequencies)), dtype=object)
         for freq in frequencies:
@@ -81,11 +82,24 @@ class TrainingApp(ctk.CTk):
                 messagebox.destroy()
 
         #Problem with the data_eeg shape
-        w = classifier.buildWForOnline(data_eeg, channels, frequencies, sampling_rate, trainningTime, trials)
+        w, acc = classifier.buildWForOnline(data_eeg, channels, frequencies, sampling_rate, trainningTime, trials)
+        acc_label = ctk.CTkLabel(self, text="Acurácia do Classificador por Frequência:")
+        acc_label.pack(pady=10)
+        for i, freq in enumerate(frequencies):
+            freq_acc_label = ctk.CTkLabel(self, text=f"Frequência {freq} Hz: {acc[i]:.2f}%")
+            freq_acc_label.pack(pady=5)
+        
 
         # Salvar o classificador 'w' para uso posterior
         with open("classifier.pkl", "wb") as f:
             pickle.dump(w, f)
+        
+        back_button = ctk.CTkButton(self, text="Voltar", command=self.destroy)
+        back_button.pack(pady=20)
+        back_button._clicked = ctk.IntVar()
+        back_button.configure(command=lambda: back_button._clicked.set(1))
+        self.wait_variable(back_button._clicked)
+
         self.destroy()
         app = InitialSelection()
         app.mainloop()
