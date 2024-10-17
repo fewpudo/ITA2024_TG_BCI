@@ -116,15 +116,27 @@ class OnlineApp(ctk.CTk):
         self.trainningTime_entry = ctk.CTkEntry(self, placeholder_text="Tempo de Aquisição (s)")
         self.trainningTime_entry.pack(pady=10)
 
+        self.freq_entry = ctk.CTkEntry(self, placeholder_text="Frequências Desejadas (Hz)")
+        self.freq_entry.pack(pady=10)
+
+        self.channels_entry = ctk.CTkEntry(self, placeholder_text="Canais")
+        self.channels_entry.pack(pady=10)
+
         self.confirm_button = ctk.CTkButton(self, text="Confirmar", command=self.confirm_selection)
         self.confirm_button.pack(pady=20)
 
     def confirm_selection(self):
-        trainningTime = int(self.trainningTime_entry.get())
+        # trainningTime = int(self.trainningTime_entry.get())
+        trainningTime = 5
+        trials = 1
+        frequencies = [8]
+        channels = 8
+
         # Carregar o classificador salvo
         with open("classifier.pkl", "rb") as f:
             w = pickle.load(f)
-        y_pred = acquisition.BCIOnline(trainningTime, w)
+        data_eeg = acquisition.BCIOnline(trainningTime, w)
+        y_pred = classifier.classify(w, data_eeg, channels, frequencies, sampling_rate, trainningTime, trials)
         print(y_pred)
 
 if __name__ == "__main__":

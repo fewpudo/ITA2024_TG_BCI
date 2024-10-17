@@ -51,7 +51,6 @@ def NewCanalXfreqEvocada(data, trainingTime, trials, channels, evokedFreqs, samp
 
 
 def buildOnlineFeatureMatrix(data, channels, evokedFreqs, samplingRate, trainingTime, trials):
-
     featureMatrix = np.ones((channels*len(evokedFreqs),samplingRate*trainingTime*trials), dtype=object)
 
     for freq in evokedFreqs:

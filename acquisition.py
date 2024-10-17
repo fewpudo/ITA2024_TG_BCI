@@ -33,22 +33,23 @@ def trainningAcquisition(trainningTime, trial): #Retirar Trial
         # board.release_session()
 
 def BCIOnline(trainningTime, w):
-    params = BrainFlowInputParams()
-    params.serial_port='/dev/tty.usbserial-DM00D434'
-    board = BoardShim(BoardIds.CYTON_BOARD.value, params)
+    # params = BrainFlowInputParams()
+    # params.serial_port='/dev/tty.usbserial-DM00D434'
+    # board = BoardShim(BoardIds.CYTON_BOARD.value, params)
     sampling_rate = 250
     try:
-        board.prepare_session()
-        board.start_stream()
+        # board.prepare_session()
+        # board.start_stream()
 
         for i in range(trainningTime):
-            time.sleep(1.5)
-            data = board.get_board_data(sampling_rate)
-            data_eeg = data[1:9,:]
-            ypred = classifier.classify(data_eeg, w)
+            # time.sleep(1.5)
+            # data = board.get_board_data(sampling_rate)
+            # data_eeg = data[1:9,:]
+            data_eeg = data.mockOnlineInputData()
+            return data_eeg
 
-        board.stop_stream()
-        board.release_session()
+        # board.stop_stream()
+        # board.release_session()
     except Exception as e:
         print("Ocorreu um erro durante a aquisição de dados:", str(e))
-        board.release_session()
+        # board.release_session()

@@ -18,6 +18,12 @@ def mockInputData(trial):
     data = data[0:8, 125:1375, 0, trial]
     return data
 
+def mockOnlineInputData():
+    subject = f"subjects/S{1}.mat"
+    data = scipy.io.loadmat(subject)
+    data = data['data']
+    data = data[0:8, 500:750, :, 0]
+    return data
 
 def carFilter(data):
     mean = np.mean(data, axis=0)
