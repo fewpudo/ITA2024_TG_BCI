@@ -7,15 +7,15 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 
-data = np.random.rand(8, 250)
 samplingRate = 250
 freqs = 4
+
 
 def mockInputData(trial):
     subject = f"subjects/S{1}.mat"
     data = scipy.io.loadmat(subject)
     data = data['data']
-    data = data[0:8, 0:1250, 0, trial]
+    data = data[0:8, 125:1375, 0, trial]
     return data
 
 

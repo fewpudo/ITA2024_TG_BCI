@@ -67,17 +67,17 @@ def buildOnlineFeatureMatrix(data, channels, evokedFreqs, samplingRate, training
     axs[0, 0].set_title(f'{evokedFreqs[0]}Hz')
     axs[0, 0].scatter(evokedFreqs, [windowedData[0, samplingRate+8], windowedData[0, samplingRate+10], windowedData[0, samplingRate+12], windowedData[0, samplingRate+15]], color='red')
     
-    axs[0, 1].plot(x, windowedData[3, samplingRate:samplingRate+30], label=f'{evokedFreqs[1]}Hz')
+    axs[0, 1].plot(x, windowedData[9, samplingRate:samplingRate+30], label=f'{evokedFreqs[1]}Hz')
     axs[0, 1].set_title(f'{evokedFreqs[1]}Hz')
-    axs[0, 1].scatter(evokedFreqs, [windowedData[3, samplingRate+8], windowedData[3, samplingRate+10], windowedData[3, samplingRate+12], windowedData[3, samplingRate+15]], color='red')
+    axs[0, 1].scatter(evokedFreqs, [windowedData[9, samplingRate+8], windowedData[9, samplingRate+10], windowedData[9, samplingRate+12], windowedData[9, samplingRate+15]], color='red')
     
-    axs[1, 0].plot(x, windowedData[7, samplingRate:samplingRate+30], label=f'{evokedFreqs[2]}Hz')
+    axs[1, 0].plot(x, windowedData[21, samplingRate:samplingRate+30], label=f'{evokedFreqs[2]}Hz')
     axs[1, 0].set_title(f'{evokedFreqs[2]}Hz')
-    axs[1, 0].scatter(evokedFreqs, [windowedData[7, samplingRate+8], windowedData[7, samplingRate+10], windowedData[7, samplingRate+12], windowedData[7, samplingRate+15]], color='red')
+    axs[1, 0].scatter(evokedFreqs, [windowedData[21, samplingRate+8], windowedData[21, samplingRate+10], windowedData[21, samplingRate+12], windowedData[21, samplingRate+15]], color='red')
     
-    axs[1, 1].plot(x, windowedData[10, samplingRate:samplingRate+30], label=f'{evokedFreqs[3]}Hz')
+    axs[1, 1].plot(x, windowedData[31, samplingRate:samplingRate+30], label=f'{evokedFreqs[3]}Hz')
     axs[1, 1].set_title(f'{evokedFreqs[3]}Hz')
-    axs[1, 1].scatter(evokedFreqs, [windowedData[10, samplingRate+8], windowedData[10, samplingRate+10], windowedData[10, samplingRate+12], windowedData[10, samplingRate+15]], color='red')
+    axs[1, 1].scatter(evokedFreqs, [windowedData[31, samplingRate+8], windowedData[31, samplingRate+10], windowedData[31, samplingRate+12], windowedData[31, samplingRate+15]], color='red')
     for ax in axs.flat:
         ax.set(xlabel='Frequência (Hz)', ylabel='Amplitude do sinal')
         ax.legend()
