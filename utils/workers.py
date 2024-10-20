@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 # Melhorar essa função
 # Matrizes tem dimensão (1250 amostras) x (3 canais * 6 trials * 4 frequências + 1 coluna de uns) -> Posso ajustar rápido com a professora!
 def buildValidationAndTestMatrix(data, labelMatrix):
-    testMatrix, validationMatrix, yTest, yValidation = train_test_split(data, labelMatrix,random_state=100, test_size=0.2) 
+    testMatrix, validationMatrix, yTest, yValidation = train_test_split(data, labelMatrix,random_state=30, test_size=0.2) 
     print(f"Matriz de teste: {testMatrix.shape}")
     print(f"Matriz de labels de validacao: {yValidation.shape}")
     return testMatrix, validationMatrix, yTest, yValidation

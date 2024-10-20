@@ -11,18 +11,26 @@ samplingRate = 250
 freqs = 4
 
 
-def mockInputData(trial):
-    subject = f"subjects/S{1}.mat"
+def mockInputData(trial, freq):
+    if freq == 8:
+        x = 0
+    if freq == 10:
+        x = 2
+    if freq == 12:
+        x = 4
+    if freq == 15:
+        x = 7
+    subject = f"subjects/S{22}.mat"
     data = scipy.io.loadmat(subject)
     data = data['data']
-    data = data[0:8, 125:1375, 0, trial]
+    data = data[56:64, 125:1375, x, trial]
     return data
 
 def mockOnlineInputData():
-    subject = f"subjects/S{1}.mat"
+    subject = f"subjects/S{22}.mat"
     data = scipy.io.loadmat(subject)
     data = data['data']
-    data = data[0:8, 500:750, :, 0]
+    data = data[56:64, 500:750, :, 0]
     return data
 
 def carFilter(data):

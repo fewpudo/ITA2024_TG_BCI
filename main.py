@@ -3,7 +3,7 @@ import customtkinter as ctk
 import numpy as np
 import acquisition
 import classifier
-
+import featureMatrix as ft
 sampling_rate = 250
 class InitialSelection(ctk.CTk):
     def __init__(self):
@@ -68,7 +68,7 @@ class TrainingApp(ctk.CTk):
         data_eeg = np.zeros((8, trainningTime*trials*sampling_rate,len(frequencies)), dtype=object)
         for freq in frequencies:
             for trial in range(trials):
-                data = acquisition.trainningAcquisition(trainningTime, trial)
+                data = acquisition.trainningAcquisition(trainningTime, trial, freq)
                 data_eeg[:, trial*sampling_rate*trainningTime:(trial+1)*sampling_rate*trainningTime, frequencies.index(freq)] = data
 
                 messagebox = ctk.CTkLabel(self, text=f"{freq} Hz - Trial {trial + 1} de {trials} concluído. Pressione Confirmar para iniciar o próximo trial.")
@@ -94,6 +94,9 @@ class TrainingApp(ctk.CTk):
         with open("classifier.pkl", "wb") as f:
             pickle.dump(w, f)
         
+        with open("UserDataInput.pkl", "wb") as u:
+            pickle.dump([frequencies, trainningTime, channels, trials], u)
+        
         back_button = ctk.CTkButton(self, text="Voltar", command=self.destroy)
         back_button.pack(pady=20)
         back_button._clicked = ctk.IntVar()
@@ -116,28 +119,33 @@ class OnlineApp(ctk.CTk):
         self.trainningTime_entry = ctk.CTkEntry(self, placeholder_text="Tempo de Aquisição (s)")
         self.trainningTime_entry.pack(pady=10)
 
-        self.freq_entry = ctk.CTkEntry(self, placeholder_text="Frequências Desejadas (Hz)")
-        self.freq_entry.pack(pady=10)
-
-        self.channels_entry = ctk.CTkEntry(self, placeholder_text="Canais")
-        self.channels_entry.pack(pady=10)
-
         self.confirm_button = ctk.CTkButton(self, text="Confirmar", command=self.confirm_selection)
         self.confirm_button.pack(pady=20)
 
+        self.result_box = ctk.CTkTextbox(self, width=500, height=300)
+        self.result_box.pack(pady=5)
+
     def confirm_selection(self):
-        # trainningTime = int(self.trainningTime_entry.get())
+        frequencies = [8, 10, 12, 15]
         trainningTime = 5
-        trials = 1
-        frequencies = [8]
         channels = 8
+        trials = 6
 
         # Carregar o classificador salvo
         with open("classifier.pkl", "rb") as f:
             w = pickle.load(f)
-        data_eeg = acquisition.BCIOnline(trainningTime, w)
-        y_pred = classifier.classify(w, data_eeg, channels, frequencies, sampling_rate, trainningTime, trials)
-        print(y_pred)
+
+        # with open("UserDataInput.pkl", "rb") as u:
+        #     frequencies, trainningTime, channels, trials = pickle.load(u)
+
+        # trainningTime = int(self.trainningTime_entry.get())
+        for i in range(trainningTime):
+            data_eeg = acquisition.BCIOnline()
+            featureMatrix = ft.ftMatrixForRealTimeAcquisition(data_eeg, channels, frequencies, sampling_rate)
+            y_pred = classifier.classify(w, featureMatrix)
+            print(y_pred)
+            result = frequencies[np.argmax(y_pred)]
+            self.result_box.insert(ctk.END, f"Resultado: {result} Hz\n")
 
 if __name__ == "__main__":
     app = InitialSelection()

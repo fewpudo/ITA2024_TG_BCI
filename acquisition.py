@@ -12,7 +12,7 @@ import data
 # Permitir escolher quais frequências serão utilizadas
 
 
-def trainningAcquisition(trainningTime, trial): #Retirar Trial
+def trainningAcquisition(trainningTime, trial, freq): #Retirar Trial
     # params = BrainFlowInputParams()
     # params.serial_port='/dev/tty.usbserial-DM00D434'
     # board = BoardShim(BoardIds.CYTON_BOARD.value, params)
@@ -23,7 +23,7 @@ def trainningAcquisition(trainningTime, trial): #Retirar Trial
 
         # data = board.get_board_data(sampling_rate*trainningTime) # data de cada janela
         # data_eeg = data[1:9,:]
-        data_eeg = data.mockInputData(trial)
+        data_eeg = data.mockInputData(trial, freq)
         
         # board.stop_stream()
         # board.release_session()
@@ -32,7 +32,7 @@ def trainningAcquisition(trainningTime, trial): #Retirar Trial
         print("Ocorreu um erro durante a aquisição de dados:", str(e))
         # board.release_session()
 
-def BCIOnline(trainningTime, w):
+def BCIOnline():
     # params = BrainFlowInputParams()
     # params.serial_port='/dev/tty.usbserial-DM00D434'
     # board = BoardShim(BoardIds.CYTON_BOARD.value, params)
@@ -41,12 +41,8 @@ def BCIOnline(trainningTime, w):
         # board.prepare_session()
         # board.start_stream()
 
-        for i in range(trainningTime):
-            # time.sleep(1.5)
-            # data = board.get_board_data(sampling_rate)
-            # data_eeg = data[1:9,:]
-            data_eeg = data.mockOnlineInputData()
-            return data_eeg
+        data_eeg = data.mockOnlineInputData()
+        return data_eeg
 
         # board.stop_stream()
         # board.release_session()

@@ -53,9 +53,8 @@ def buildWForOnline(data, channels, evokedFreqs, samplingRate, trainningTime, tr
 
     return WMatrix, acc
 
-def classify(classifier, x_entrada, channels, evokedFreqs, samplingRate, trainningTime, trials):
-    inputFeatureMatrix = ft.buildOnlineFeatureMatrix(x_entrada, channels, evokedFreqs, samplingRate, trainningTime, trials)
-    y_pred = np.matmul(classifier, inputFeatureMatrix)
+def classify(classifier, x_entrada):
+    y_pred = np.matmul(x_entrada, classifier)
     for i in range(y_pred.shape[0]):
         index = np.argmax(y_pred[i,:])
         y_pred[i,index] = 1
