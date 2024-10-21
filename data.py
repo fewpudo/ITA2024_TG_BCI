@@ -63,7 +63,6 @@ def buildFFTData(data):
     res = np.concatenate((res, ones), axis=0)
     return res
 
-
 def plotFFTData(fft_res):
     frequencies = [8, 10, 12, 15]
     for j in range(8):
@@ -79,7 +78,6 @@ def plotFFTData(fft_res):
         plt.xlim(5, 50)
         plt.title(f'FFT Data for Channel {j+1}')
         plt.show()
-
 
 def plotAllChannelsFFTData(fft_res, i):
     frequencies = [8, 10, 12, 15]
@@ -97,7 +95,6 @@ def plotAllChannelsFFTData(fft_res, i):
     plt.title(f'FFT Data for All Channels window {i+1}')
     plt.legend()
     plt.show()
-
 
 def buildNewLabelMatrix(evokedFreq):
     y = np.ones((9,freqs), dtype=object)*-1

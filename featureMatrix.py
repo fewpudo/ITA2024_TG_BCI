@@ -31,7 +31,6 @@ def NewfftWindowAlternative(data,trials, channels, evokedFreqs, samplingRate, tr
             fft_res[j, i*samplingRate:(i+1)*samplingRate] = abs(tools.fftTransform(data[j, i*samplingRate:(i+1)*samplingRate]))
     return fft_res
 
-
 def NewCanalXfreqEvocada(data, trainingTime, trials, channels, evokedFreqs, samplingRate):
     temp = np.empty((trainingTime*trials*len(evokedFreqs),channels*len(evokedFreqs)), dtype=object)
     for i in range(trainingTime*trials):
@@ -56,7 +55,6 @@ def CanalXfreqEvocadaOnline(data, channels, evokedFreqs):
         temp[0, len(evokedFreqs)*j:len(evokedFreqs)*(j+1)] = max_data
     return temp
 
-
 def buildOnlineFeatureMatrix(data, channels, evokedFreqs, samplingRate, trainingTime, trials):
 
     featureMatrix = np.ones((channels*len(evokedFreqs),samplingRate*trainingTime*trials), dtype=object)
@@ -66,7 +64,6 @@ def buildOnlineFeatureMatrix(data, channels, evokedFreqs, samplingRate, training
 
     windowedData = NewfftWindowAlternative(featureMatrix, trials, channels, evokedFreqs, samplingRate, trainingTime)
     
-    # Escolhemos 1 canal para cada frequência evocada e plotamos o sinal.
     x = np.arange(30)
     fig, axs = plt.subplots(2, 2, figsize=(10, 6))
     axs[0, 0].plot(x, windowedData[5, samplingRate:samplingRate+30], label=f'{evokedFreqs[0]}Hz')

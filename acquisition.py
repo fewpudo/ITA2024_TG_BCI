@@ -7,11 +7,7 @@ import classifier
 from data import plotAllChannelsFFTData, buildFFTData
 import data
 
-
-# Permitir escolher quais canais serão utilizados
-# Permitir escolher quais frequências serão utilizadas
-
-
+# Código comentado é para uso junto da placa Cyton
 def trainningAcquisition(trainningTime, trial, freq): #Retirar Trial
     # params = BrainFlowInputParams()
     # params.serial_port='/dev/tty.usbserial-DM00D434'

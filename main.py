@@ -65,7 +65,7 @@ class TrainingApp(ctk.CTk):
         trainningTime = 5
         channels = 8
         trials = 6
-        data_eeg = np.zeros((8, trainningTime*trials*sampling_rate,len(frequencies)), dtype=object)
+        data_eeg = np.zeros((channels, trainningTime*trials*sampling_rate,len(frequencies)), dtype=object) # Remover dimensão das frequências(dim 3) quando for usar com a placa Cyton
         for freq in frequencies:
             for trial in range(trials):
                 data = acquisition.trainningAcquisition(trainningTime, trial, freq)
@@ -81,7 +81,6 @@ class TrainingApp(ctk.CTk):
                 confirm_next_trial_button.destroy()
                 messagebox.destroy()
 
-        #Problem with the data_eeg shape
         w, acc = classifier.buildWForOnline(data_eeg, channels, frequencies, sampling_rate, trainningTime, trials)
         acc_label = ctk.CTkLabel(self, text="Acurácia do Classificador por Frequência:")
         acc_label.pack(pady=10)
@@ -89,8 +88,6 @@ class TrainingApp(ctk.CTk):
             freq_acc_label = ctk.CTkLabel(self, text=f"Frequência {freq} Hz: {acc[i]:.2f}%")
             freq_acc_label.pack(pady=5)
         
-
-        # Salvar o classificador 'w' para uso posterior
         with open("classifier.pkl", "wb") as f:
             pickle.dump(w, f)
         
@@ -129,14 +126,12 @@ class OnlineApp(ctk.CTk):
         frequencies = [8, 10, 12, 15]
         trainningTime = 5
         channels = 8
-        trials = 6
 
-        # Carregar o classificador salvo
         with open("classifier.pkl", "rb") as f:
             w = pickle.load(f)
 
         # with open("UserDataInput.pkl", "rb") as u:
-        #     frequencies, trainningTime, channels, trials = pickle.load(u)
+        #     frequencies, trainningTime, channels = pickle.load(u)
 
         # trainningTime = int(self.trainningTime_entry.get())
         for i in range(trainningTime):
