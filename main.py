@@ -64,7 +64,7 @@ class TrainingApp(ctk.CTk):
         frequencies = [8, 10, 12, 15]
         trainningTime = 5
         channels = 8
-        trials = 6
+        trials = 5
         data_eeg = np.zeros((channels, trainningTime*trials*sampling_rate,len(frequencies)), dtype=object) # Remover dimensão das frequências(dim 3) quando for usar com a placa Cyton
         for freq in frequencies:
             for trial in range(trials):

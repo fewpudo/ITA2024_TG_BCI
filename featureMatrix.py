@@ -21,6 +21,21 @@ def NewCarData(data, freq, channels):
     for i in range(len(freq_data[1])):
         filtered_data[:, i] = tools.CarFilter(freq_data, i)
     
+    # x = np.arange(freq_data.shape[1])
+    # fig, axs = plt.subplots(2, 1, figsize=(10, 6))
+    # axs[0].plot(x, freq_data[0, :], label='Antes do Filtro CAR')
+    # axs[0].set_title('Antes do Filtro CAR')
+    # axs[0].legend()
+    
+    # axs[1].plot(x, filtered_data[0, :], label='Depois do Filtro CAR')
+    # axs[1].set_title('Depois do Filtro CAR')
+    # axs[1].legend()
+    
+    # for ax in axs.flat:
+    #     ax.set(xlabel='Time', ylabel='Amplitude')
+    # plt.tight_layout()
+    # plt.show()
+
     channel_data = channelSelector(filtered_data, channels)
     return channel_data
 

@@ -20,17 +20,17 @@ def mockInputData(trial, freq):
         x = 4
     if freq == 15:
         x = 7
-    subject = f"subjects/S{22}.mat"
+    subject = f"subjects/S{20}.mat"
     data = scipy.io.loadmat(subject)
     data = data['data']
     data = data[56:64, 125:1375, x, trial]
     return data
 
 def mockOnlineInputData():
-    subject = f"subjects/S{22}.mat"
+    subject = f"subjects/S{20}.mat"
     data = scipy.io.loadmat(subject)
     data = data['data']
-    data = data[56:64, 500:750, :, 0]
+    data = data[56:64, 500:750, :, 5]
     return data
 
 def carFilter(data):
